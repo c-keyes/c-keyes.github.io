@@ -1,0 +1,359 @@
+<!DOCTYPE html>
+
+<html>
+
+<head>
+	<title>Christopher Keyes - Math Circle</title>
+	<link rel="stylesheet" type="text/css" href="style.css" />
+	<script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+	<script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+	<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+	<script>
+		function ShowAndHide(SectionName) {
+	    	var x = document.getElementById(SectionName);
+	   		if (x.style.display == 'none') {
+	        	x.style.display = 'block';
+	    	} else {
+	        	x.style.display = 'none';
+	    	}
+		}
+	</script>
+</head>
+
+<body>
+	<header>
+		Christopher Keyes
+	</header>
+
+	<script src="nav.js"></script>
+
+	<div id="rounded">
+
+		<h2>The Mathematics of <em>Press Your Luck</em></h2>
+
+		<p>
+			<em>Originally developed as a lesson for high school students at <a href="http://www.mathcs.emory.edu/mathcircle/">Emory Math Circle</a> and taught in January 2022.</em>
+		</p>
+
+		<figure><center>
+			<img src="./photos/press-your-luck-cheering.gif" alt = "winner cheering on press your luck">
+		</center></figure>
+
+		<h3>Overview</h3>
+
+			<p>
+				<em>Press Your Luck</em> is an American TV game show from the 80s, recently rebooted and hosted by Elizabeth Banks. On the show, contestants win money and prizes by hitting a button to stop a light moving around the board. The catch is that some spaces (called <em>whammies</em>) cause you to lose all your winnings and start over from zero. On their turn, players can choose to take their spins or pass them to an opponent, creating the dilemma: do you want to <em>press your luck</em> or pass? In this lesson, students will play this game and develop strategies to help them win more money than their opponents, and the most money overall.
+			</p>
+
+		<h4>Objectives and transferable skills</h4>
+
+		<ul>
+			<li>Probability: students will determine the probability of hitting a whammy (or not) over multiple spins.</li>
+			<li>Expected value: students will investigate how to assign an expected value to each spin and use this to inform decision making.</li>
+			<li>Strategy: students will develop, test, and evaluate various play strategies.</li>
+		</ul>
+
+		<h4>Resources</h4>
+
+		<ul>
+			<li><a href="./files/mc_pyl_worksheet.pdf">Activity worksheet</a>, 1 per student.</li>
+			<li><a href="https://www.youtube.com/watch?v=zvhiQbUhM4A&ab_channel=lucnatang">Promotional video</a> introducing the 2019 reboot.</li>
+			<li><a href="https://arcadethunder.com/trivia-games/press-your-luck">Free online single player version</a> of Press Your Luck.</li>
+			<li><a href="https://www.youtube.com/watch?v=WltjaxiowW4&list=WL&index=8&ab_channel=JordanBaker">Full video</a> of Michael Larson's infamous 1984 game.</li>
+		</ul>
+
+		<h3> Introduction and warmup </h3>
+
+		<p>
+			We'll start by briefly introducing the gameplay on <em>Press Your Luck</em>, as it originated in 1983. We'll focus here on the multi-contestant phase involving spinning (or not!) on the big board. For more detailed information about the game's rules, <a href="https://gameshows.fandom.com/wiki/Press_Your_Luck">see the game shows wiki</a>, or go watch a couple episodes of the show! Original episodes can be <a href="https://www.youtube.com/results?search_query=press+your+luck+full+episodes">found on youtube</a> while the current episodes air on Hulu.
+		</p>
+
+		
+		<p>
+			Each game of <em>Press Your Luck</em> has 3 contestants who answer trivia questions for the right to take a spin (or not!) on "the big board." This board contains a total of 54 spaces, each of which could contain cash, prizes, or a <em>whammy</em> --- a grinning red creature who steals all of a contestant's earnings! Even worse, if a contestant hits 4 whammies, they are out of the game entirely. There may be between 5 and 11 whammies placed on the board, so every spin has the opportunity to earn thousands in cash or prizes, but carries the risk of hitting a whammy and losing it all.
+		</p>
+
+		<p>
+			On their turn, a contestant can choose to <em>play or pass</em>. Choosing <em>play</em> means taking one of the spins in hopes of winning money and prizes, while choosing to <em>pass</em> gives all of their spins to a rival. The person who gets these passed spins <em>must use them</em>; these spins cannot be passed to another player, unless they hit a whammy. Our main goal for today is to figure out when it is a good idea to play, and when it is best to pass.
+		</p>
+
+		<h4> How to play <em>Press Your Luck</em> with dice </h4>
+
+		<p>
+			Since we don't all have a big board lying around, let's simulate each spin by rolling a six-sided die. Here's what each roll is worth:
+			<ol>
+				<li>Whammy! Reset all money to zero. (You are allowed to pass <em>any</em> remaining spins now.)</li>
+				<li>$200</li>
+				<li>$300</li>
+				<li>$400</li>
+				<li>$500</li>
+				<li>$1000</li>
+			</ol>
+			Notice that even though we only have 6 "board spaces," we're still about as likely to hit a whammy as on the TV show! (Assuming each spin is random and each space is equally likely to be landed on...)
+		</p>
+
+		<p>
+			<strong>Setup</strong>: you'll need a six-sided die and something to write on to keep track of your score.
+		</p>
+
+		<p>
+			<strong>2-3 players</strong>: decide on the order in which to play. Each player rolls the die to determine how many spins they start with. On each player's turn, they can choose to take one of their spins or pass them to an opponent. Keep track of your scores and remaining spins as you go. Play continues until all players are out of spins. The winner is the player with the most money at the end!
+		</p>
+
+		<p>
+			<strong>1 player</strong>: if you're playing by yourself, you can follow the directions above and play as multiple people. Alternatively, you can play by starting with 5 spins and trying to make the most money. After each spin, you can decide to stop (instead of passing), or risk what you have earned by pressing your luck!
+		</p>
+
+		<p>
+			<strong>Guiding questions:</strong> Try playing using the rules above. As you go, keep in mind the following questions: 
+			<ul>
+				<li>When should you play? When should you pass? Why?</li>
+				<li>Only the winner keeps their money. What are some things you can do to ensure you not only win, but that you keep <em>maximum</em> cash?</li>
+			</ul>
+			Write down any other observations you make!
+		</p>
+
+		<h3> Questions </h3>
+
+		<p>Below are several questions about the game. Here is a <a href="./files/mc_pyl_worksheet.pdf">printable pdf version</a>.</p>
+
+		<ol>
+			<li>What is the likelihood of rolling <em>once</em> and <em>not</em> hitting a whammy?</li>
+
+			<li>What is the likelihood of rolling <em>twice</em> and <em>not</em> hitting a whammy?</li>
+
+			<li>What is the likelihood of rolling <em>3, 4, or 5 times</em> in a row <em>without</em> hitting a whammy? You should be able to figure out the likelihood of avoiding a whammy in <em>n</em> consecutive spins.</li>
+
+			<li>When does it become <em>more likely than not</em> that you <em>will</em> hit a whammy?</li>
+
+			<li>Let's say you start your turn with 6 spins left.
+				<ol type = "a">
+					<li>Should you take all 6 spins?</li>
+					<li>Suppose you take the first 3 spins and don't hit any whammies. You now have 3 spins left. Should you keep playing? Why or why not?</li>
+				</ol></li>
+
+			<li>On an "average" spin, how much money will you make? (<em>Note: this is a bad question. Try answering it in different ways!</em>)</li>
+
+			<li>In a 2 person game, you have 1 spin remaining and your opponent has 0. You have $2000 and your opponent has $1400. Should you play or pass?</li>
+		</ol>
+
+		<h4> Challenge questions </h4>
+
+		<ol type = "A">
+			<li><em>One spin situations.</em> Assume you have one spin left and your opponent has none.
+				<ol type = "i">
+					<li>If you are behind by more than $1000, should you play or pass?</li>
+					<li>If you are ahead by more than $1000, should you play or pass?</li>
+					<li>In the other situations, when should you play or pass?</li>
+				</ol>
+			</li>
+
+			<li><em>Two spin situations.</em> You have two spins left and your opponent has none. What should you do with them, depending on the score? 
+				(<em>Note: you can try this without answering A above, but it might help!</em>)</li>
+
+			<li><em>Extra spins</em>. In the game show, some spaces have extra spins attached to them. Let’s change our rules so that if you roll a 5 or 6, you get $1000 and an extra spin. Try this and think about the following questions.
+				<ol type = "i">
+					<li>How does this change the game, and your strategy?</li>
+					<li>Do your answers to 5 and 6 above change?</li>
+				</ol></li>
+
+			<li><em>The Michael Larson Game</em>. In 1984, Michael Larson won $110,237 on Press Your Luck ($295,806 in today’s dollars) by spinning over 40 times without hitting a whammy. What is the probability of this, assuming each spin is random? Do you think it was random?</li>
+		</ol>
+
+		<h3> Discussion </h3>
+
+		<p><strong>Spoiler alert!</strong> Below I'll share some answers and insight about the questions above. Try them on your own first, before reading ahead, and proceed only if you're stuck or ready to check your answers and reasoning.</p>
+
+		<BUTTON ONCLICK="ShowAndHide('Questions14')">Show/hide questions 1-4</BUTTON>
+
+		<div ID="Questions14" STYLE="display:none">
+		
+		<p>
+			Questions 1 - 4 are just a review of probability. The chance of hitting a whammy (rolling a 1) is 1/6, so for each spin, the likelihood of avoiding a whammy is 5/6. Since the outcome of each spin is the same and doesn't depend on the previous one (they are <em>independent</em> and <em>identically distributed</em>), the probability of getting no whammies in <em>n</em> spins is \(\left(\frac{5}{6}\right)^n\).
+		</p>
+
+		<p>
+			If you're not satisfied with this explanation, try writing down all the possibilities of two dice rolls, keeping in mind that it matters which die is which (there are 36 possibilities!). In 30 of these 36 possible rolls, the first die isn't 1. Of <em>those</em> 30 rolls, the second die isn't 1 in 25 of them. Thus in 25 of our 36 possibilities, we avoided the whammy. Since each of these possibilities is equally likely, the likelihood of missing a whammy in two rolls is 25/36, or about 69.4%. Some other examples are recorded below with their numerical values.
+		</p>
+
+		<center><table>
+			<tr>
+				<td>Number of spins</td>
+				<td>Likelihood of no whammies</td>
+			</tr>
+			<tr>
+				<td>1</td>
+				<td>\(\frac{5}{6}\)</td>
+			</tr>
+			<tr>
+				<td>2</td>
+				<td>\(\frac{25}{36} \approx 0.694\)</td>
+			</tr>
+			<tr>
+				<td>3</td>
+				<td>\(\frac{125}{216} \approx 0.579\)</td>
+			</tr>
+			<tr>
+				<td>4</td>
+				<td>\((\frac{5}{6})^4 \approx 0.482\)</td>
+			</tr>
+			<tr>
+				<td>5</td>
+				<td>\((\frac{5}{6})^5 \approx 0.402\)</td>
+			</tr>
+			<tr>
+				<td>6</td>
+				<td>\((\frac{5}{6})^6 \approx 0.335\)</td>
+			</tr>
+		</table></center>
+
+		<!--<center><table>
+			<tr>
+				<td>Number of spins</td>
+				<td>1</td>
+				<td>2</td>
+				<td>3</td>
+				<td>4</td>
+				<td>5</td>
+				<td>6</td>
+			</tr>
+			<tr>
+				<td>Likelihood of no whammies</td>
+				<td>\(\frac{5}{6}\)</td>
+				<td>\(\frac{25}{36} \approx 0.694\)</td>
+				<td>\(\frac{125}{216} \approx 0.579\)</td>
+				<td>\((\frac{5}{6})^4 \approx 0.482\)</td>
+				<td>\((\frac{5}{6})^5 \approx 0.402\)</td>
+				<td>\((\frac{5}{6})^6 \approx 0.335\)</td>
+				<td></td>
+				<td></td>
+			</tr>
+		</table></center>-->
+
+		<p>
+			We see above that when taking 3 spins in a row, we are <strong>more likely than not to avoid any whammies</strong>. But if we take 4 spins in a row, <strong>we are more likely to hit a whammy than not</strong>. 
+		</p>
+
+			</div>
+
+	<BUTTON ONCLICK="ShowAndHide('Question5')">Show/hide question 5</BUTTON>
+
+		<div ID="Question5" STYLE="display:none">
+
+		<p>
+			In question 5 we start thinking about how to play the game. For (a) with six spins, our calculations above suggest that we only have about a 33.5% chance of taking them without a whammy. That means there's almost a 2/3 chance that we'll lose all of our money <em>at some point in those 6 spins</em>. So should we go for it? It depends. Are we currently in first place, or not? And by how much are we leading/behind? How many spins do our opponents have? 
+		</p>
+
+		<p>
+			Regardless of whether you think it's best to take all six spins or not, how could you test your strategy to see if it works? You might try gathering some data: start with $0 and roll 6 times, calculating your new total. Do this a bunch of times to get an idea of how much you tend to win (or lose!). What if instead you started with $1000, $2000, or $3000? What do you notice?
+		</p>
+
+		<p>
+			On the other hand, in (b) we have only 3 spins left, having taken 3 successful spins. Now are are <em>more likely than not</em> (about 58% likely) to avoid the whammy on our final 3 spins. Now the question is basically the same as part (a), only that we have 3 spins left instead of 6.
+		</p>
+
+		<p>
+			I gathered some data using a simulation that I repeated 10000 times. Here are the average totals after 3 and 6 spins:
+		</p>
+
+		<center><table>
+			<tr>
+				<td>Starting amount</td>
+				<td>After 3 spins</td>
+				<td>After 6 spins</td>
+			</tr>
+			<tr>
+				<td>$0</td>
+				<td>$995.56</td>
+				<td>$1605.32</td>
+			</tr>
+			<tr>
+				<td>$1000</td>
+				<td>$1592.97</td>
+				<td>$1934.06</td>
+			</tr>
+			<tr>
+				<td>$2000</td>
+				<td>$2153.10</td>
+				<td>$2245.83</td>
+			</tr>
+			<tr>
+				<td>$3000</td>
+				<td>$2737.57</td>
+				<td>$2629.18</td>
+			</tr>
+		</table></center>
+
+		<p>
+			It looks like when we start with $0, $1000, or $2000, we tended to make more money by playing! But if we start with $3000, we tend to end up with less money after 3 or 6 spins. What else do you notice? 
+		</p>
+
+	</div>
+
+	<BUTTON ONCLICK="ShowAndHide('Question6')">Show/hide question 6</BUTTON>
+
+		<div ID="Question6" STYLE="display:none">
+
+		<p>
+			Question 6: how much money to we get on an "average" spin? Another way to phrase this question is what is the <em>expeced value</em> of each spin? One way we might answer is to take the average of the six values on the die: if the whammy is worth zero and the others are worth the amounts listed, we get a total of $2400. Split six ways, the average value is $400. So is each spin worth an average of $400? Why do you agree or disagree?
+		</p>
+
+		<p>
+			Think more carefully about the whammy. Above I said it was worth zero, but is that true? Maybe not! If we start with $1200, the whammy <em>takes away</em> that money, so maybe it's worth -$1200 instead of zero. Now the average value of each space is only $200. Can you make the relationship between the money we start with and the expected outcome more precise? How does this change when we are playing against an opponent, and we will win nothing unless we overtake their amount?
+		</p>
+
+		<!--<p>
+			To make this work more generally, say we start with \(B\) dollars. We have a 1/6 chance of getting the whammy, in which case we end up with $0. We also have a 1/6 chance each of getting \(B + \$200, \ B + \$300,\ B + \$400,\ B + \$500,\) and \(B + \$1000\). Adding up all of these possibilities and dividing by 6, we get that our expected total after one spin is
+			\[\mathrm{EV}(\text{after 1 spin}) = \frac{5}{6}B + 400.\]
+			This is less than our starting value of \(B\) whenever \(B > 2400\). 
+		</p>-->
+
+	</div>
+
+	<BUTTON ONCLICK="ShowAndHide('Question7')">Show/hide question 7</BUTTON>
+
+		<div ID="Question7" STYLE="display:none">
+
+		<p>
+			Question 7 is a good warmup for challenge question A. Let's see what happens. If we <strong>play</strong>, we have a 1/6 chance of hitting the whammy and losing the game. On the other hand, we have a 5/6 chance of winning some extra money.
+		</p>
+
+		<p>
+			If we <strong>pass</strong>, our opponent can only win if they roll a 6 and get the $1000. On all other rolls, they will have less money than us and lose the game, leaving us with $2000.
+		</p>
+
+		<p>
+			So which is better? It looks like either way we a 5/6 chance of winning. But if we take the spin, we have the chance to win more money than the $2000 we started with. In this case, I would take the chance, in hopes of coming home with an extra few hundred bucks!
+		</p>
+
+	</div>
+
+		<p>
+			I won't give away the challenge questions here, but try them! Or, come up with your own questions and try to answer them.
+		</p>
+
+		<p>
+			If you are curious about question D on Michael Larson, you can <a href="https://www.youtube.com/watch?v=WltjaxiowW4&list=WL&index=8&ab_channel=JordanBaker">actually watch his game on YouTube</a>. He won so much that they had to split the episode into two parts! The story of this game is quite fascinating, inspiring a 2003 documentary <em>Big Bucks: The Press Your Luck Scandal</em>. (I haven't seen this film to recommend it.)
+		</p>
+
+		<h3> Instructor notes</h3>
+
+		<p>
+			I originally developed and used this lesson for a 60 minute high school math circle lesson. We started by pairing off students into groups of two to play a few rounds of the dice-based version. Then, students answered the questions in their groups. Some groups made progress on the challenge questions and we got to discuss question D briefly as a class at the end. Depending on your time limits and student background, you might choose to spend less (or more) time on the basic probability questions. 
+		</p>
+
+		<p>
+			I used six-sided dice because they were available. If you have access to 8-, 10-, 12-, or 20-sided dice, you could cook up a set of values for each side, or better yet let the students decide this themselves! To keep things close to the game show, I suggest keeping the whammy probability to between 10% and 20%, but it might be interesting to try extreme values of these as well. There are also often valuable prizes like cars, which dwarf the value of every other space; if using a 20-sided die, it might be interesting to make one space correspond to a similarly rich value.
+		</p>
+
+		<p>
+			For a particularly advanced group of students, I might suggest introducing the extra spins earlier (see challenge question C). The presence of extra spin spaces considerably reduces my own personal intuition about the problem.
+		</p>
+
+		<p>
+			If your students have the expertise, or would like to learn, suggest that they write a computer program to simulate playing the game. This can be as simple --- or get as detailed --- as you want and could be done in pretty much any programming language. I used python (including the <tt>random</tt> package) to write the simulation used in my explanation of question 5 above in just a few lines. This could make for a fun introductory project for the student new to programming, and automating the data collection process makes it possible to get a better handle on the expected value and decision-making problems discussed in this lesson!
+		</p>
+</div>
+</body>
+
+</html>

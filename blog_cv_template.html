@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+
+<html>
+
+<head>
+	<title>Christopher Keyes - Blog</title>
+	<link rel="stylesheet" type="text/css" href="style.css" />
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+</head>
+
+<body>
+	<header>
+		Christopher Keyes
+	</header>
+
+	<nav>
+		<ul>
+			<li> <a href="./index.html">Home</a>
+			<li> <a href="./research.html">Research</a>
+			<li> <a href="./teaching.html">Teaching</a>
+			<li> <a href="./service.html">Organization/Outreach</a>
+			<li> <a href="./Keyes_CV.pdf">CV</a>
+			<li> <a href="./fun.html">Other</a>
+			<li> <a href="./drp.html">DRP</a>
+	</nav>
+
+	<div id="rounded">
+
+		<h2>Formatting your CV in LaTeX</h2>
+
+				<em>(Originally published at <a href="https://blogs.ams.org/mathgradblog/?p=33495&preview=true">AMS Graduate Student Blog</a> on October 8, 2021)</em>
+
+				<p>Academics in all stages need a CV, from prospective graduate students to postdocs, to faculty applying for promotion. As you gain experience, change roles, and apply for new positions or grants, your CV should change to reflect this. In this post I'll share my thoughts on how best to format your CV in LaTeX so that it does its job while requiring minimal effort to update and maintain. I'll also share my own LaTeX CV template for you to use --- or modify to make your own!</p>
+
+		<h3>What's in a CV</h3>
+
+				<p>The main point of this post is to discuss how to TeX up and maintain a CV you already have, but if you're starting from scratch, the goal of the CV is to communicate your academic credentials and professional history. A good place to begin is by looking at CVs of other people, perhaps starting with your advisor(s), other faculty members you know, and other graduate students. Ask lots of people what they think is important in a CV, then take the average of the advice you receive --- they might even share their own templates! Advice on this topic is abundant online too; see for example <a href="https://blogs.ams.org/mathgradblog/2014/01/30/top-6-resume-tips/">this past blog post</a>.</p>
+
+				For a current graduate student applying for grants or research postdocs, it should probably contain at minimum:
+				<ul>
+ 						<li>Educational history (undergraduate, but not high school),</li>
+ 						<li>List of publications and preprints,</li>
+						<li>List of invited and contributed talks,</li>
+	 					<li>Teaching experience, and</li>
+	 					<li>Relevant organizational experience, outreach, and awards.</li>
+				</ul>
+				Generally, things are listed in order of importance, with the most important items at the top and the less important ones coming later (and irrelevant things don't show up!). Of course, importance is relative to your priorities and those of the job you're applying for. Most graduate student CVs I've seen roughly follow the order above, but with prestigious awards and grants listed earlier, if present. The story is somewhat different for undergraduates applying to graduate school; in that case, I'd choose to list relevant coursework and any research experiences or REUs prominently, in lieu of publications and talks.
+
+				<p>Some of the best advice I have received and implemented is to keep one long master CV with <em>everything</em> on it, then copy and paste that into new files for each application, or type of position. This is made easy by having a great LaTeXed CV! If you're not sure whether it's appropriate to put something on your CV, you can simply include it, comment it out, and ask your friends, colleagues, and advisor(s) for advice. Then if you decide it should be included, it's easily uncommented!</p>
+
+		<h3>Using a template</h3>
+
+				<p>If you don't already have your CV TeXed up, or you don't love how it looks, you can use a preformatted template. For example, if you like how <a href="http://www.math.emory.edu/~ckeyes3/Keyes_CV.pdf">my CV</a> looks, I've made the template publicly available! Check out <a href="https://github.com/c-keyes/CV_template">my github</a> to download the .cls and .tex file, or find them on <a href="https://www.overleaf.com/read/ghhdxmtynkmg">Overleaf</a>. It's pretty basic, but I like it and it's easy to use. Here's how:
+				</p>
+
+				<ol>
+ 						<li>Download the <code>cv_style.cls</code> and <code>CV_template.tex</code> files. Save them in the same folder. (If you're on Overleaf, copy both files into a new project.)</li>
+ 						<li>Open <code>CV_template.tex</code> in your favorite latex editor and compile.</li>
+ 						<li>Fill in with your details.</li>
+				</ol>
+				That's it! From here you can tweak the CV either by editing the .tex file or by tinkering with the .cls file. I'll discuss this more carefully at the end of this post.
+
+				<p>There's endless options for CV templates available on the web (including directly through <a href="https://www.overleaf.com/latex/templates">Overleaf</a>), so check them out and see if there's one you like more. Some may just be .tex files, unlike mine above. Experiment to see what you like, but remember that it doesn't have to be perfect; it just needs to convey your information without being an eyesore.</p>
+		
+		<h3>Some useful general tips</h3>
+
+				<dl>
+ 					<dt>The <code>trivlist</code> environment</dt>
+ 					<dd>This environment provides a list, much like <code>itemize</code> or <code>enumerate</code>, but it doesn't have bullets or numbering. It's a <em>trivial</em> list! I have sometimes found the need to list things while control the spacing between them, but without bullet points or numbers, and this command fills that role nicely.</dd>
+ 					<dt>The <code>etaremune</code> environment</dt>
+ 					<dd>This is how to get lists numbered in reverse, so your most recent items are listed first, and it's clear from a glance how many items are in the list. This may be especially relevant in the cases of papers or talks, as the person reading your CV will likely want to know how many of these you have.</dd>
+ 					<dt>Links</dt>
+ 					<dd>Link to things! If the person reading your CV is interested in your paper, make it easy for them to find it by adding a link. This goes for your email, your website (you should have one, maybe this is a future blog post), etc. If you list outreach programs or awards you have won that aren't self-explanatory, including a hyperlink is an easy way to offer more explanation without taking up real estate on your CV. Note that you'll probably want to use the <code>hyperref</code> package, which provides the <code>href</code> command to make hyperlinks (this is included in my template).</dd>
+ 					<dt>Make it public</dt>
+ 					<dd>Don't just upload your CV on job applications, but make it available on your website (again, which you should have; see <a href="https://blogs.ams.org/mathmentoringnetwork/2021/02/08/building-an-online-academic-profile-begins-with-your-website/">this blog post</a>). People will want to find you and quickly get an idea of who you are and what it is that you do --- especially once you're giving talks about your research! Make sure they can find you by having your CV linked on your website. If you don't have a website (yet), you could ask your department to post your CV in their directory, until your site is ready.</dd>
+ 					<dt>Getting help</dt>
+ 					<dd>If you get stuck with LaTeX, Google and <a href="https://tex.stackexchange.com/">Stack Exchange</a> are your friends. There's an entire Stack Exchange subdomain dedicated to LaTeX with well-written solutions and thoughtful comments, and I don't think I've had a LaTeX problem that it didn't quickly solve. The <a href="https://www.overleaf.com/learn">Overleaf documentation</a> is also a great resource, and all major packages have their documentation posted online.</dd>
+				</dl>
+
+		<h3>Looking more closely at the .cls file</h3>
+
+				<p>I was originally inspired to make a resume template when applying for summer jobs as an undergraduate, as I had just recently learned LaTeX and thought it would be a fun way to learn some of the details (it was). Plus I actually needed the resume to apply for these jobs! I originally followed some <a href="https://www.overleaf.com/learn/latex/How_to_write_a_LaTeX_class_file_and_design_your_own_CV_(Part_1)">advice on Overleaf</a> and tinkered with it over the years to produce the present form. I've actually simplified it several times, to the point that it doesn't do much more than format the section headings and provide some commands, and it doesn't need to.</p>
+
+				<p>The function of the file <code>cv_style.cls</code> is to provide the document class <code>cv_style</code>. This is then used in place of a standard class, like <code>article</code> or <code>amsart</code>, at the beginning of a .tex file. The file can simply be placed in the same directory as the .tex file, where it tells the compiler to format the sections a certain way and to allow certain commands, described below.</p>
+
+				<p>The first few lines specify certain packages which must be loaded for the class file to work properly, just like you'd load packages in a .tex file. Then there are the <code>titleformat</code> and titlespacing commands, which allow you to specify how the section headings appear. For the section headings, I like the small caps with a horizontal rule under, but you can tinker the size, font style, and spacing to your liking!</p>
+
+				The remainder of the file consists of four commands. These provide formatting for your contact information and name, as well as talks and papers.
+				<ul>
+ 					<li><code>\contact{institution}{department}{office address}{email}{website}</code>This command produces your contact information. Each item appears on its own line, with a small space between the office address and the email. I like this centered, at the top of the file, right under the name.</li>
+ 					<li><code>\name{}</code>This command produces your name (what a surprise), nice and big, in pretty small caps font.</li>
+ 					<li><code>\talk{title}{conference}{host location}{date}</code>This command formats a talk. The title is italicized, while the conference, host institution, and date are listed simply, separated by commas.</li>
+ 					<li><code>\paper[coauthor(s)]{title}{status}{notes/links}</code>This is my command to format a paper. I like the title in bold, and I use the status input to share whether the paper is in preparation, submitted to a journal, or accepted. In the final input, I include any relevant links, e.g. to the arxiv version of the paper. The first argument is to include any coauthors. This is an optional argument, since not all papers will have coauthors.</li>
+				</ul>
+				Whenever I write a new paper or give a talk, I just go to my .tex file, make a new an item in a list environment, and fill in the fields in the appropriate command above. If I ever don't like the formatting --- say I don't want the titles of papers to be bold anymore --- one change to the .cls file changes all of the entries in the .tex file!
+
+		<h3>Concluding thoughts</h3>
+
+		With just a bit of forethought, and the (optional, but fun) effort of learning how to make a simple .cls file, this system has saved me a lot of time and made it incredibly easy to keep my CV up to date. It's also straightforward to tinker with, so I can fine tune the appearance when I choose to.
+
+		<!-- Got a template you'd like to share, or your own tips for writing and formatting a CV? Share them in the comments below!-->
+
+</div>
+</body>
+
+</html>

@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+
+<html>
+
+<head>
+	<title>Christopher Keyes - Blog</title>
+	<link rel="stylesheet" type="text/css" href="style.css" />
+	<script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+	<script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+</head>
+
+<body>
+	<header>
+		Christopher Keyes
+	</header>
+
+	<script src="nav.js"></script>
+
+	<div id="rounded">
+
+		<h2>Talking baseball: What is a Double Worth?</h2>
+
+			<p>
+				<em>(Originally published on February 22, 2022)</em>
+			</p>
+
+			<p>
+				<em>This is the first in a series of posts on sabermetrics and the mathematics of baseball. You can find the rest below:
+					<ul>
+						<li>What is a Double Worth?</li>
+						<li><a href = "./blog_stealing_bases.html">When Should You Steal Second Base?</a></li>
+						<li><a href = "./blog_no_hitters.html">Heuristics for Unlikely No Hitters</a></li>
+						<li><a href = "./blog_win_prob.html">A Case Study in Win Probability and Leverage</a></li>
+						<li><a href = "./blog_scoring_without_hits.html">Scoring Without Hits</a></li>
+						<li><a href="./blog_runs_by_inning.html">Run Scoring by Inning in 2021</a></li>
+					</ul></em>
+			</p>
+
+		<h3> Introducing this series </h3>
+
+		<p>
+			This semester as part of the <a href="./drp.html">Emory Math Directed Reading Program</a> (DRP) that I organize, I'm mentoring a student that wants to learn about sports analytics. Data and statistics are decidedly not my area of expertise, but I'm a bit of a baseball fan, and I've been wanting for some time to better understand how these new(ish) metrics for evaluating teams and players work. 
+		</p>
+
+		<p>
+			We started with an archived online course on sabermetrics, <a href = "https://www.edx.org/course/sabermetrics-101-introduction-to-baseball-analytic">available on EdX</a>, and so far it's been really fun! I am playing with databases on SQL and (re)learning some basic statistics that I never properly learned before starting my PhD in mathematics. Most of all though, it has been an opportunity to interact with my favorite childhood game in a new way. 
+		</p>
+
+		<p>
+			This post --- or series of posts, if it becomes one --- serves as an outlet for me to record insights I find throughout this experiment. I'll try to focus on the simple but powerful ideas that reshape how one approaches the game of baseball, or interesting mathematical anomalies that have appeared over the years. I think that will be most interesting for anyone reading this, as there are plenty of other people better qualified to comment on the fine details of modern sabermetrics. But with that said, sometimes I can't help myself from going down a numerological rabbit hole, so I hope you bear with me and enjoy!
+		</p>
+
+		<h3>How much is a double worth?</h3>
+
+		<p>
+			One of the first questions we set out to answer in this DRP was <em>how much is a double worth?</em> As a reasonable first answer, we see that a hitter reaches two bases on a double instead of the one on a single; from a bases perspective, a double is worth just that: double. A triple is worth three bases, and a home run is four. This is precisely the idea of <em>total bases</em>: it's the sum of a player's hits with this weighting,
+			\[TB =1B + 2(2B) + 3(3B) + 4(HR).\]
+			Of course, if you're looking at the newspaper box score (or more likely the MLB.com box score) singles typically aren't reported, but <em>hits</em> are, along with doubles, triples, and home runs. So we can easily modify our formula above by counting hits instead of singles, and reducing our weights on the others by one so we don't double count,
+			\[TB = H + 2B + 2(3B) + 3(HR).\]
+		</p>
+
+		<p>
+			Many baseball fans are familiar with the <em>batting average</em>. It's the quotient of hits by <em>at bats</em>, \(BA = H/AB\) giving a measure of success at the plate. Many baseball fans also understand that this is a flawed metric, as it fails to take into account the fact that hitting for power is often better. 
+		<p>
+
+		<p> For example, a batting average of .300 essentially means a hitter got a hit in 30% of chances (not counting walks, etc). This is quite good --- the MLB average in 2021 was .244, the <a href = "https://www.baseball-reference.com/leagues/majors/bat.shtml">sixth lowest since 1900</a>. But a .300 hitter with only singles is certainly inferior to a .300 hitter who is blasting home runs for each hit! <em>Slugging percentage</em> is a first attempt at correcting this, by using the naive weighting we used above:
+			\[SLG = TB/AB.\]
+			Looking back at our two .300 hitters, the one hitting singles has a slugging percentage of .300, while the one who is only blasting home runs is slugging a monstrous 1.200. For reference, the MLB league average slugging percentage in 2021 was .411 (interestingly, this is 24th highest since 1900).
+		</p>
+
+		<p>
+			Slugging is a useful metric, but it's not bases that win games; it's <em>runs</em>. Is a double really worth twice as much as a single when it comes to creating runs? Probably not! In the case of a single or double (or triple or walk, even) there is some value simply in not making an out. To understand this value, we need to do more than just count up total bases!
+		</p>
+
+		<h3>Run expectancy and base-out states</h3>
+
+		<p>
+			Let's try to better understand our situtation using runs. Which team is more likely to score: one batting with the bases are empty and two outs, or a team with the bases loaded and no outs? My money is on the team with the bases loaded and no outs! With the vast collection of historical basebal data (over 100 years and as many as 2000+ games per year) we can make this precise with <em>run expectancy</em>.
+		</p>
+
+		<p>
+			The idea is to ask how many runs a team is expected to score in a given <em>base-out</em> situation, i.e. with a certain number of outs and players on base. These average values are determined for a given season by counting up how many times the base-out situation occurred and how many runs were scored afterward, then dividing to find the average. These are then recorded in a <em>run exepectancy matrix</em> (it's a matrix in that it's a grid of values, not a linear transformation!). Note that some calculations of run expectancy matrices can get rather complicated --- the professionals do it for each ballpark and year separately --- but we'll just use the sample values on <a href = "https://library.fangraphs.com/misc/re24/">FanGraphs</a> for today. You should read more there if you're interested.
+		</p>
+
+		<!--<p>
+			The idea is to ask how many runs a team is expected to score in a given <em>base-out</em> situation, i.e. with a certain number of outs and players on base. Each play thereafter changes this expected number of runs by some value, which is the value assigned to that play (don't worry, I'll give an example below). As a sanity check, to calculate the run expectancy of no outs and no runners on base, this should be pretty close to the average number of runs scored per inning, since every inning starts this way! For other situations, it can be computed similarly using historical data. Note that some calculations of run expectancy matrices can get rather complicated --- the professionals do it for each ballpark and year separately --- but we'll just use the values on <a href = "https://library.fangraphs.com/misc/re24/">FanGraphs</a> for today. You should read more there if you're interested. 
+		</p>-->
+
+		<p>
+			Once we know the run expectancy of each base-out state, we can calculate the value of play by <em>how much it changes the run expectancy</em>. For example, here's how we might value a leadoff single. We start with the bases empty and no outs, which has a run expectancy of 0.461. We interpret this as <em>on average, a team will score 0.461 runs per inning.</em> This adds up to about 4.15 runs per game, which seems pretty reasonable for the modern era if slightly on the low side (league average in 2021 was 4.53 runs per game). After a leadoff single, we have a runner on first and no outs, which gives a run expectancy of 0.831. That means our team is now expected to score 0.831 runs, almost double what we started at! If the leadoff runner reached base in every inning, we'd expect this team to score about 7.48 runs per game.
+		</p>
+
+		<p>
+			So what was our leadoff single worth? The <em>increase</em> in run expectancy was 0.37, so we'll say this single was worth about a third of a run. Repeating the calculation with one out we find that a single with no runners on is worth about 0.246 runs, while if there are two outs it's only worth 0.119 runs.
+		</p>
+
+		<p>
+			In a general situation, if \(RE_{\mathrm{start}}\) is the run expectancy at the start of a play and \(RE_{\mathrm{end}}\) is the run expectancy afterward, the value of a given play in expected runs is given by the difference, plus any runs scored (\(RS\)) on the play
+			\[RE_{\mathrm{end}} - RE_{\mathrm{start}} + RS.\]
+		</p>
+
+		<p>
+			Already we can make several observations. A leadoff single is worth the same, in terms of run expectancy, as a leadoff walk. Both have the same outcome, with a runner placed at first base and no outs! The biggest hit in terms of run expectancy is a two out grand slam, worth 3.359 runs above average. Interestingly, even though four runs scored, this grand slam isn't worth four runs <em>above average</em>; this is because we expected about 0.736 runs to score anyway before the play.
+		</p>
+
+		<p>
+			Another important consideration is that making an out without moving any baserunners always has negative value; strking out with the bases loaded and no outs is worth -0.762 runs, which is an even bigger run expectancy change than our leadoff single (but in the wrong direction!). Outs that move or score runners aren't so bad though; with no outs and a runner on third, a sacrifice fly or groundout scoring the runner is a change of -0.183 runs.
+		</p>
+
+		<p>
+			Let's get back to our original question: how much is a double worth? Using the run expectancy matrix, a leadoff double is worth 0.607 runs, which is about 1.64 times that of the single. With one or two outs, the increase in run expectancy for a double with the bases empty is 0.401 and 0.21 respectively, each of which is worth between 1.6 and 1.8 times more than the single in that situation.
+		</p>
+
+		<p>
+			Let's repeat this calculation for all 24 base-out states --- assuming all runners move exactly one base for a single and two for a double --- and naively taking the average, though we shouldn't really do this since some base-out states are more common than others. I found that a double is worth about 1.65 times as many runs as a single when there are no outs, 1.79 times as much with one out, and a whopping 2.47 times as much as a single with two outs. (This last calculation was skewed way up by the situation with a runner on second and 2 outs. A double is worth 1 run (the run that scored) while a single is worth 0.166, about six times less!) 		
+		</p>
+
+		<p>
+			More broadly, average run expectancy provides a way to quantify the relative desirability of baserunner configurations and number of outs. Beyond evaluating the hitter's contributions, it can be used to inform a manager's situational decisionmaking, by suggesting whether or not a team should sacrifice bunt (see the exercise at the bottom of this page) or steal a base (see a future blog post). 
+		</p>
+
+		<h3>Toward linear weights and wOBA</h3>
+
+		<p>
+			Instead of taking this naive average, assuming that all base-out situations are equally likely to occur, what we really should be doing is taking the average <em>over all singles or doubles</em>. That is, we go through each single that occurred (say in a given season) and sum up the changes in run expectancy, then divide by the number of singles. According to <a href = "https://library.fangraphs.com/principles/linear-weights/">this FanGraphs article</a> using slightly different run expectancy data from 2010 - 2015, we get about 0.44 runs above average per single, and 0.74 for doubles, the ratio of which is 1.68 --- very close to what I found above for no outs!
+		</p>
+
+		<p>
+			In going through this extra step, we're moving toward calculating <em>linear weights</em> for singles and doubles, which can be done for data about triples, home runs, and walks as well. Once we understand how each of these changes average run expectancy, we can try to put them together into a single statistic, much like slugging percentage attempted to assign different values to the different hits! This leads to the statistic known as <em>weighted on base average</em> or <em>wOBA</em>. You can read more about it and how it's calculated <a href = "https://library.fangraphs.com/principles/linear-weights/">on FanGraphs.</a>
+		</p>
+
+		<p>
+			One last point worth mentioning, though, is how wOBA is scaled. What we have done so far is determine that doubles produce a change in run expectancy which is 1.68 times more than singles do. But we're measuring run expectancy <em>relative to the average outcome</em>, not to making an out. Remember, making an out is worth negative runs in terms of average run expectancy! If we want, we can determine the change in run expectancy for the average out, which was about -0.26 for the year 2015 as mentioned in the FanGraphs article above. Then we can rescale all of our weights by adding 0.26, so now they represent change in run expectancy <em>relative to making an out</em>. This is actually done in computing wOBA in order to make the statistic more comparable to something like batting average or on base percentage, which value outs as zero.
+		</p>
+
+		<p>
+			With this change (again using the 2015 data from the above article) singles are worth 0.7 while doubles are worth 1 run, relative to outs. Now a double is only about 1.4 times as valued as a single! This makes sense when we remember our earlier observation that both a single and double avoid making an out, so part of their value comes from the simple fact that they aren't outs. 
+		</p>
+
+		<p>
+			One interesting wrinkle in all of this is that these values, the linear weights associated to the run expectancy of singles and doubles, depend on the <em>run environment</em>. This run environment varies era-to-era, year-to-year, and even ballpark-to-ballpark. To visualize this discrepancy with our example, consider the home run. If the next batter hits a home run, it doesn't matter whether or not I hit a single or a double! In the modern game, we hit a lot of home runs (the four highest HR totals by a team in a season were recorded in 2019), which slightly devalues a double. Back in the dead ball era when few home runs were hit, doubles were probably worth even more relative to a single, but I'll let you verify this one at home.
+		</p>
+
+		<p>
+			If you want to learn more about wOBA and the methodology behind it, check out <a href = "https://library.fangraphs.com/the-beginners-guide-to-deriving-woba/">this FanGraphs guide</a>. Also worth checking out is <a href = "https://www.baseballprospectus.com/news/article/41203/prospectus-feature-ops-and-woba-briefly-revisited/">this Baseball Prospectus piece</a> comparing the relative performance of wOBA to the much simpler OPS (on base plus slugging) in predicting team run production.
+		</p>
+
+		<h3>Exercise: to bunt or not to bunt?</h3>
+
+		<p>
+			Here's one you can try at home: a <em>sacrifice bunt</em> is a strategy used with runners on base in which the batter purposefully makes in out in order to allow the runner(s) to advance to the next base. The conventional wisdom is that it is worth giving up an out to get a runner to second (or third) base, who can more easily score on subsequent plays.
+		</p>
+
+		<p>
+			<strong>But is it?</strong>
+		</p>
+
+		<p>
+			Using the run expectancy matrix, determine if it is worth it to sacrifice bunt. Start with the situation of zero outs and a runner on first and determine the change in run expectancy (after the bunt, we'll have one out and a runner on second). Is it positive or negative? What does that mean? If it is negative, is there a situation in which you might still want to sacrifice? Why?
+		</p>
+
+		<p>
+			<strong>Answer key:</strong> Check out <a href = "https://sites.northwestern.edu/nusportsanalytics/2021/04/02/is-the-bunt-dying/">this article</a> on the decline of the sacrifice bunt.
+		</p>
+
+</div>
+</body>
+
+</html>

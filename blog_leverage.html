@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+
+<html>
+
+<head>
+	<title>Christopher Keyes - Blog</title>
+	<link rel="stylesheet" type="text/css" href="style.css" />
+	<script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+	<script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+</head>
+
+<body>
+	<header>
+		Christopher Keyes
+	</header>
+
+	<script src="nav.js"></script>
+
+	<div id="rounded">
+
+		<h2>Talking Baseball: How does the designated runner in extra innings affect win probabilities?</h2>
+
+			<p><em>(Originally published on ***)</em></p>
+
+      <p><em>This is part of a series of posts on sabermetrics and the mathematics of baseball. You can find more <a href = "./blog_talking_baseball.html">here</a>.</em></p>
+
+      <p>
+            The Red Sox - Rays game last Saturday (April 23rd, 2022) was bizarre. While the Rays threw a combined no-hitter over the first 9 innings, the Red Sox held the Rays to only two baserunners in that span, sending the game to extra innings tied 0-0. In the top of the 10th, with the ***link*** designated runner on second base, the Red Sox scored two runs to go up 2-0. Here's the ***link*** play-by-play for the bottom of the 10th:
+            <ul>
+                  <li>Ji-Man Choi strikes out. 1 out.</li>
+                  <li>Josh Lowe strikes out. 2 out.</li>
+                  <li>Balk. Designated runner Randy Arozarena advances to 3rd.</li>
+                  <li>Taylor Walls reaches on error (by second baseman Trevor Story). Arozarena scores.</li>
+                  <li>Walls steals second base.</li>
+                  <li>Kevin Kiermaier hits a home run. Walls scores. Rays win 3-2.</li>
+            </ul>
+      </p>
+
+      <h2>Outline</h2>
+
+      <ul>
+            <li>Discuss Red Sox game on 4/23/22</li>
+            <li>Which events had substantial impact on WP? The balk? Not really, even if Story still made the error. The error by Story? Yes, but not by a ton, only about 5%</li>
+            <li>Moral of the story: the runner is likely to score anyway, so WP doesn't move much by allowing the runner to do so. The runner scoring is already "priced in" to our model!</li>
+            <li>Kiermaier's hit is the big boy - WP dropped from about 90% to 0% in one swing. </li>
+            <li>How do we quantify this? Luckily WP is pretty easy to calculate in extra innings: determine likelihood of 0, 1, 2, 3, etc. runs scoring, then determine likelihood that the home team independently scores 0/1+, 1/2+, etc. Can model with run expectancy data from 2021 season</li>
+            <li>Leverage index measures the "average change in WP." To compute this (rougly at least), we imagine all the possible scenarios, compute their (expected) frequencies and associated WP, then take product, sum. </li>
+      </ul>
+
+      Perhaps in another article: how does leverage look different with the new rules? Does this quantify "excitement?" No, but it does sort of capture pivotalness. Exhibit this with LI calculations for the first batter in the 10th inning. Calculate WPs using 2021 averages. Assume the possible outcomes of the 1st batter and get frequencies from 2022 averages. It <em>does</em> appear that with the runner on second, LI is somewhat higher. 
+
+      <ul>
+            <li>Greg Stoll's win probability finder has lots of data</li>
+
+      </ul>
+
+</div>
+</body>
+
+</html>

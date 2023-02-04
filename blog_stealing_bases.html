@@ -1,0 +1,581 @@
+<!DOCTYPE html>
+
+<html>
+
+<head>
+	<title>Christopher Keyes - Blog</title>
+	<link rel="stylesheet" type="text/css" href="style.css" />
+	<script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+	<script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+</head>
+
+<body>
+	<header>
+		Christopher Keyes
+	</header>
+
+	<script src="nav.js"></script>
+
+	<div id="rounded">
+
+		<h2>Talking Baseball: When Should You Steal Second Base?</h2>
+
+			<p><em>(Originally published on March 9, 2022)</em></p>
+
+			<p><em>This is part of a series of posts on sabermetrics and the mathematics of baseball. You can find more <a href = "./blog_talking_baseball.html">here</a>.</em></p>
+
+		<p>
+			My favorite thing about playing baseball as a kid was stealing bases. I thought I was fast, since I did it a lot and didn't get caught, but it probably had more to do with young catchers having poor throwing arms. Even now as an adult just watching baseball on TV, stolen base attempts never fail to inject some excitement. 
+		</p>
+
+		<p>
+			But how much is a stolen base really worth? How confident should a manager in a runner to signal a steal? And how has this part of the game changed over the past century?
+		</p>
+
+		<h3>Valuing the steal</h3>
+
+		<p>
+			In <a href = "./blog_talking_baseball.html">a previous post</a>, I briefly outlined the idea of <em>run expectancy</em> and used it to compare the value of a single to a double. To recap, we start with a <em>run expectancy matrix</em> for a given year or era. This tells us the <em>average runs scored</em> by baseball teams in a given <em>base-out situation</em>, i.e. with a certain number of outs and runners on base. A given play moves us from one base-out state to another, and we value this play in terms of the difference in expected runs at the start and end of the play, plus any runs that scored:
+			\[RE_{end} - RE_{start} + RS.\]
+			For a more complete explanation, check out <a href = "https://library.fangraphs.com/misc/re24/">this one on FanGraphs</a>. Most of the run expectancy values I'll be using today come from <a href = "https://gregstoll.com/~gregstoll/baseball/stats.html#V.0.1.0.1.0.0">Greg Stoll's Win Expectancy Finder</a>.
+		</p>
+
+		<p>
+			This makes valuing a stolen base pretty easy. Let's say there's no outs and a speedy runner on first base who wants to steal second. Using <a href = "https://gregstoll.com/~gregstoll/baseball/stats.html#V.0.1.0.2.0.0.2021.2021">Greg Stoll's calculations with 2021 data</a>, the average run expectancy is 0.94. That is, averaging over all situations with no outs and a runner on first in MLB games in 2021, the batting team scored 0.94 runs by the end of the inning. After stealing second, there are still no outs  but a runner on second, giving an average run expectancy of 1.17. Taking the difference, since no runs scored on this play, the stolen base changed the run expectancy by +0.23 runs!
+		</p>
+
+		<p>
+			This approach alone suggests that for every four or five steals of second base, a team will score about one more run. The problem with this approach is that it fails to take into account the risk in <em>attempting</em> the steal of second base. In 2021, MLB runners were successful in their stolen base attempts only <a href = "https://www.baseball-reference.com/leagues/majors/2021.shtml">75.7% of the time</a>! If the runner in our example above had been thrown out, there would be one out with the bases empty, which lowers the average run expectancy to 0.28 for a change of -0.66 runs.
+		</p>
+
+		<h3>When is stealing (bases) worth it?</h3>
+
+		<p>
+			As a first attempt to value this risk, let's try to evaluate the impact of the stolen base <em>attempt</em> instead, using the same run expectancy framework. If \(RE_{end}\) is our new run expectancy after the attempted steal, then its expected value \(E(RE_{end})\) is given by
+			\[E\left( RE_{end} \right) = SB\% \cdot RE_{success} + (1 - SB\%) \cdot RE_{caught}\]
+			where \(SB\%\) is the chance of success on the stolen base attempt. Thus the expected value, in change in run expectancy above average, of a stolen base attempt is given by
+			\[E\left( RE_{end} \right) - RE_{start}.\]
+			In the case of no outs and a runner on first, this becomes
+			\[SB\% \cdot RE^0_{020} + (1 - SB\%) \cdot RE^1_{000} - RE^0_{100}.\]
+			Here the shorthand \(RE^i_{xyz}\) indicates the run expectancy with \(i\) outs and \(xyz\) denoting the baserunner configuration (e.g. 000 for bases empty, 100 for a runner on first, 020 for a runner on second, etc).
+		</p>
+
+		<p>
+			Of course, we don't know what the chance of success is --- <em>but that's not the point.</em> We'll use this run expectancy calculation to determine <em>what value of SB% we need</em> in order to make stealing worthwhile, from a run expectancy point of view. For now, "worthwhile" means that we expect a positive change in run expectancy. So, we set up a linear inequality and solve for SB%,
+						\[SB\% \cdot RE^0_{020} + (1 - SB\%) \cdot RE^1_{000} - RE^0_{100} > 0\]
+						\[\implies SB\% > 74.2\%.\]
+			We'll call this the <em>breakeven success rate</em> for stealing bases with no outs and a runner on first. What it tells us is that if we are at least 74.2% sure that our runner will be successful in the stolen base attempt, then we expect sending the runner has a positive effect on run expectancy. Applying this strategy over and over in this situation (assuming the true success rate is above 74.2% and we're in the same run environment) would likely lead to higher runs scored over time.
+		</p>
+
+		<p>
+			Of course, we don't have a great way of estimating the true rate \(SB\%\). A good starting point might be a particular runner's season or career success rate, but this may not reflect future success future success in all situations. We might try to fit a runner's sprint speed to their success rate, but this sounds like a problem for another time, and wouldn't allow us to study more than the few years back for which we have such data. It also doesn't take into account differences in pitcher motion, pitch selection (fastballs reach the plate sooner and are harder to steal on), and catcher ability. Instead, I think of this as a manager's tool of understanding the risks and rewards associated with stealing second base (with no outs in this run environment). Using all of the information available to them in that moment, they should be about 74.2% confident in the runner just to break even. 
+		</p>
+
+		<p>
+			I went ahead and computed the breakeven success rate for several stolen base situations below, using the same sample run expectancy data. Here's what I found:
+		<center><table><caption>Breakeven SB success rate (2021)</caption>
+			<tr>
+				<th>Runner(s)</th>
+				<th>0 out</th>
+				<th>1 out</th>
+				<th>2 out</th>
+			</tr>
+
+			<tr>
+				<td>100</td>
+				<td>74.2%</td>
+				<td>72.6%</td>
+				<td>72.7%</td>
+			</tr>
+
+			<tr>
+				<td>020</td>
+				<td>75.4%</td>
+				<td>70.4%</td>
+				<td>84.6%</td>
+			</tr>
+
+			<tr>
+				<td>120</td>
+				<td>61.2%</td>
+				<td>55.9%</td>
+				<td>78.3%</td>
+			</tr>
+
+			<tr>
+				<td>103</td>
+				<td>67.3%</td>
+				<td>79.0%</td>
+				<td>86.7%</td>
+			</tr>
+		</table></center>
+		With a runner on first in all situations, the breakeven success rates look pretty similar. If I'm managing (an MLB team in 2021), that tells me that no matter how many outs there are, if I'm at least 75% confident in my runner, stealing is probably a good move. Interestingly, this is quite close to the 2021 total MLB stolen base success rate of 75.7% (though this total includes more than just steals of second base). Below are some of my other takeaways from this calculation.
+	</p>
+
+	<p><strong>Less risky, but not necessarily easier.</strong> For a runner on second base stealing third with zero or one out, the breakeven success rate is comparable to that of stealing second. This means we should have about the same amount of confidence in the runner to ask them to steal third base. Now, this doesn't tell us if it's any <em>harder or easier</em> to steal third base versus second base. It just says that the balance of risk and reward is similar to the previous situation of stealing second, in terms of run expectancy. This came as something of a surprise to me from a baseball perspective, as the runner on second base is already in scoring position, ready to score on most hits to the outfield. It does make sense that doing so is more risky with two outs than one or none, since with two outs there is no possibility of a sacrifice fly scoring the runner after they've stolen third. See <a href = "https://www.espn.com/mlb/columns/story?columnist=kurkjian_tim&id=5125738">this ESPN article from 2010</a> for some anecdotes about stealing third.</p>
+
+	<p><strong>Where are the double steals?</strong> In the third row of the table (labeled "120" above), we have runners at first and second and consider a double steal --- if successful, the runners will be at second and third. Note that here I'm assuming the catcher attempts to throw out the runner heading to third, so if caught, there will be a runner at second base only. This is not a maneuver I see often (though I don't have any data to back that up), so it's surprising to see the breakeven success rate for zero or one out considerably lower than the situations! It's actually less risky from an expected runs point of view than asking a lone runner on second to steal third base! I wonder why more teams aren't double stealing with runners on first and second. </p>
+
+
+	<p><strong>Don't make the last out at third.</strong> I remember hearing this one when playing as a kid. If there's already two outs, there's no sense in taking the risk in advancing to third (on a stolen base or otherwise) if you can stay put at second and hope for a hit to score you later. The data actually seems to support this, as the breakeven success rate is significantly higher for a runner on second (or first and second) with two outs than with none or one out. I might go so far as to say <em>don't make the last out when there's a runner in scoring position</em>, as there is also quite a jump for the situation of runners at the corners with two outs.</p>
+
+<!--	<p>
+		More surprising to me are the other rows in the table. For a runner on second base stealing third with zero or one out, the breakeven success rate is comparable to that of stealing  This means we should have about the same amount of confidence in the runner to ask them to steal third base. Now, this doesn't tell us if it's any harder or easier to steal third base versus second base. It just says that the balance of risk and reward is similar to the previous situation of stealing second. This came as something of a surprise to me from a baseball perspective, as the runner on second base is already in scoring position, ready to score on most hits to the outfield. It does make sense that doing so is more risky with two outs than one or none, since with two outs there is no possibility of a sacrifice fly scoring the runner after they've stolen third. See <a href = "https://www.espn.com/mlb/columns/story?columnist=kurkjian_tim&id=5125738">this ESPN article from 2010</a> for some anecdotes about stealing third.
+	</p>
+
+	<p>
+		The last two rows involve stealing with two runners on base. With runners on first and second (labeld "120" above), I'm assuming a double steal --- if successful, the runners will be at second and third, and I'm assuming the catcher attempts to throw out the runner heading to third. This is a risky maneuver, and not one I see often (though I don't have data to back that up), so it's surprising to see the breakeven success rate considerably lower than the other two! It's actually less risky from an expected runs point of view than just asking the runner on second to steal third base! I wonder why more teams aren't double stealing with runners on first and second. 
+	</p>
+
+	<p>
+		The last row above deals with stealing with runners on the corners, and there's a bit more here than meets the eye. At first glance, these are pretty high breakeven success rates, indicating that there's a lot of risk in attempting to steal second with a runner already on third. But we used to do this <em>all the time</em> when I played in high school. It was understood that with runners on the corners, the runner at first would <em>always</em> take second, hoping to goad an eager catcher into throwing across the diamond while the runner on third sprints for home. While our JV baseball team had a lot of success with this strategy (most of the time the catchers didn't attempt a throw), major league fielders have strong enough arms to thwart it. Still, they run the risk of airmailing the ball into center field, which will certainly allow the run to score.
+	</p>
+
+	<p>
+		If we wanted to test the strategy of attempting a steal of second and sending the other runner home if there's a throw, we'd want to have an idea of the liklihood the catcher throws to second at all (if not it's second and third), whether an out is made at second, and whether an out is made on a throw to the plate.
+	</p>-->
+
+		<!--- -->
+
+
+	<h3>Stealing across eras</h3>
+
+		<p>
+			Across the MLB, stolen bases have dropped to their lowest level in about 50 years at 0.46 steals per game (see <a href = "https://www.baseball-reference.com/leagues/majors/bat.shtml">Baseball Reference</a>). In that timeframe their peak appears to be around 1987, in which we saw around 0.85 steals per game. That's nearly a 50% drop! What's more, getting caught stealing has become more rare as well; in 2021, there were 0.15 caught steals per game, for about 1 steal attempt per game, with the aforementioned success rate of 75.7%. In 1987, players were attempting steals about 1.2 times per game and only successful about 70% of the time, suggesting that it's certainly not the case that modern players have become slower.
+		</p>
+
+		<p>
+			To better understand this trend, let's consider the possibility that <em>the game of baseball itself</em> has changed over this period. We can blame the emphasis on the home run or steroids or whatever else we want to, but perhaps MLB teams and coaches understand their run environments, and adjust their strategies accordingly. If this is the case, then we might expect that in years when more steal attempts were made, there was a greater reward for the risk of doing so, as measured in run expectancy. That is, I would expect that the breakeven stolen base success rates were <em>lower</em> in the 1980s than in 2021. 
+		</p>
+
+		<p>
+			The good news is that we can test this! Again using run expectancy data from <a href = "https://gregstoll.com/~gregstoll/baseball/stats.html#V.0.1.0.1.0.0.1980.1989">Greg Stoll's Win Expectancy Finder</a> for the years 1980 - 1989, I calculated the breakeven success rates below.
+		</p>
+
+		<center><table><caption>Breakeven SB success rate (1980-1989)</caption>
+			<tr>
+				<th>Runner(s)</th>
+				<th>0 out</th>
+				<th>1 out</th>
+				<th>2 out</th>
+			</tr>
+
+			<tr>
+				<td>100</td>
+				<td>70.6%</td>
+				<td>71.9%</td>
+				<td>68.8%</td>
+			</tr>
+
+			<tr>
+				<td>020</td>
+				<td>78.7%</td>
+				<td>67.9%</td>
+				<td>86.5%</td>
+			</tr>
+
+			<tr>
+				<td>120</td>
+				<td>61.2%</td>
+				<td>53.8%</td>
+				<td>72.9%</td>
+			</tr>
+
+			<tr>
+				<td>103</td>
+				<td>75.5%</td>
+				<td>78.2%</td>
+				<td>83.0%</td>
+			</tr>
+		</table></center>
+
+		<p>
+			The result is not quite as clear cut as I imagined, but it does tell a story. In 8 of the twelve situations above, the breakeven success rate is in fact <em>lower</em> for the 1980s than for 2021. In particular, with a runner on first base stealing second, the breakeven rate was lower in all three out situtations, so this does suggest to me that stealing bases was more favorable in the run environment of the 1980s. The biggest difference in the other direction appears to be with runners on the corners and no outs. This seems to arise from the fact that \(RE_{success}\) value for runners on second and third with no outs is about 1.96 in the 1980s and 2.11 in 2021, while the other run expectancy values are quite close --- put more simply, there was similar risk and more reward in 2021 for stealing second with runners on the corners and no outs! Overall though, several similar patterns emerge here, including the low breakeven success rate for double steals with zero and one out and the high breakeven success rates when there are two outs and runners already in scoring position.
+		</p>
+
+		<p>
+			One additional caveat to consider: how do the steals <em>themselves</em> affect the run environment and the average run expectancy data we're using for these calculations? The chance that a runner on first could steal second base, making it more likely for them to score, is built into the calculation of the \(RE^i_{100}\) values, possibly inflating them. On the other hand, the chance they get caught is also built in to this calculation, providing some balance. Either way, I expect that even at the rate of 1.2 steals per game in 1987, these represent a small enough fraction of the total plays with a runner on first base that they don't have an outsize effect on the run expectancy calculations (but if you're really worried about this and want to figure out a way to recalculate the run expectancy by excluding all stolen bases, or otherwise eliminating any potential bias, please do so and let me know!).
+		</p>
+
+		<p>
+			I tried this with a few different eras and recorded the results in
+			<a href = "https://docs.google.com/spreadsheets/d/15EWu1dzYvL41hYpmNXPIelCvc8A8XIIkPZIdgiUI1Sc/edit?usp=sharing">this Google sheet</a>. The results are color coded: shades of red indicate a breakeven success rate above 75% (when you need to be <em>the most sure</em>for it to be worthwhile), while shades of green are used for rates below 70% (when you can afford to be <em>less sure</em>). I also included some <a href = "http://www.tangotiger.net/re24.html">run expectancy data from Tom Tango</a> to compare it with the Win Expectancy Finder data. Both the run expectancy matrices and breakeven stolen base success rates compare closely for the two data sets, so I'm not two worried about any methodology or data reporting differences (like the fact that Win Expectancy Finder provides only two decimal places of precision) having an impact.
+		</p>
+
+		<h3>Stolen base success rate leaders with SQL</h3>
+
+		<p>
+			With all this talk of breakeven success rates, who was actually successful at stealing bases? Rickey Henderson is MLB's <a href = "https://www.baseball-reference.com/leaders/SB_career.shtml">all time career leader</a> in stolen bases with 1406. However, he is also the all time leader in times caught stealing, with 335. Calculating his success rate as
+			\[SB\% = \frac{SB}{SB + CS},\]
+			Rickey Henderson's career success rate is 80.8%. This is higher than most of the values in the table above, so I'd say it was likely worth him attempting all those steals from a run expectancy perspective. How does this success rate stack up to to his MLB peers?
+		</p>
+
+		<p>
+			To find out, I queried the 2019 version of the <a href = "https://www.seanlahman.com/baseball-archive/statistics/">Lahman baseball database</a> with the following SQL command:</p>
+
+		<p><blockquote>
+			<tt>
+				SELECT playerID, sum(SB) as Career_SB, sum(SB)/(sum(SB) + sum(CS)) as Career_PCT<br>
+
+				FROM batting<br>
+
+				WHERE CS is not null<br>
+
+				GROUP BY playerID<br>
+
+				HAVING sum(SB) > 99<br>
+
+				ORDER BY Career_PCT DESC;</tt></blockquote>
+		</p>
+
+		<p>
+			This command adds up a player's stolen bases and computes their success rate <em>for certain seasons</em>, namely those in which we have caught stealing data. (This data is missing from the early years in the database, so I decided to just ignore all seasons in which the data is missing.) We'll also require the players to have at least 100 stolen bases total (in years for which we have CS data) to be included. This number is totally arbitrary, but 505 players match these criteria, which seems like a reasonable number! (<a href = "https://www.baseball-reference.com/leaders/stolen_base_perc_career.shtml">Baseball Reference</a> uses a threshhold of 80 stolen base attempts, and as such a slightly different list.)
+		</p>
+
+		<center><table><caption>Career stolen base success rate leaders	(min. 100 SB in seasons with CS data)</caption>
+			<tr>
+				<th>Name</th>
+				<th>SB</th>
+				<th>SB%</th>
+			</tr>
+
+			<tr>
+				<td>1. Chase Utley</td>
+				<td>154</td>
+				<td>87.5%</td>
+			</tr>
+
+			<tr>
+				<td>2. Carlos Beltran</td>
+				<td>312</td>
+				<td>86.4%</td>
+			</tr>
+
+			<tr>
+				<td>3. Jayson Werth</td>
+				<td>132</td>
+				<td>85.2%</td>
+			</tr>
+
+			<tr>
+				<td>4. Jarrod Dyson<sup>&#8224</sup></td>
+				<td>250</td>
+				<td>85.0%</td>
+			</tr>
+
+			<tr>
+				<td>5. Kazuo Matsui</td>
+				<td>102</td>
+				<td>85.0%</td>
+			</tr>
+
+			<tr>
+				<td>6. Eric Byrnes</td>
+				<td>129</td>
+				<td>84.9%</td>
+			</tr>
+
+			<tr>
+				<td>7. Mike Trout<sup>&#8224</sup></td>
+				<td>200</td>
+				<td>84.8%</td>
+			</tr>
+
+			<tr>
+				<td>8. Nate McLouth</td>
+				<td>133</td>
+				<td>84.7%</td>
+			</tr>
+
+			<tr>
+				<td>9. Pokey Reese</td>
+				<td>144</td>
+				<td>84.7%</td>
+			</tr>
+
+			<tr>
+				<td>10. Tim Raines</td>
+				<td>808</td>
+				<td>84.7%</td>
+			</tr>
+
+			<tr>
+				<td></td>
+				<td>&#8942;</td>
+				<td></td>
+			</tr>
+
+			<tr>
+				<td>40. Rickey Henderson</td>
+				<td>1406</td>
+				<td>80.8%</td>
+			</tr>
+
+			<tr>
+				<td></td>
+				<td>&#8942;</td>
+				<td></td>
+			</tr>
+
+			<tr>
+				<td>505. Babe Ruth*</td>
+				<td>110</td>
+				<td>48.5%</td>
+			</tr>
+		</table></center>
+
+		<p>*Babe Ruth had 13 stolen bases between 1914 and 1919, for which no CS data was available. CS data is also missing for his final 1935 season.</p>
+
+		<p><sup>&#8224</sup>Jarrod Dyson and Mike Trout are currently active, and the numbers above are through the end of the 2019 season. As of the end of the 2021 season, they both have success rates above 84.4% and thus would remain in this top ten (so long as no one else has made this list in the meantime!).
+		</p>
+
+		<h4>Making sense of this</h4>
+
+		<p>
+			Let's start at the bottom, which is my favorite part of this table. Babe Ruth was caught more often than not in his career (in the years for which I have data anyway). This includes four years straight from 1922 - 1925, when he was still relatively young and not as full of hot dogs. I have to wonder why the Babe was still trying to steal, even making four attempts in 1934, his final full season (he was caught three out of four times). If he were with us today, he might protest "the run environment was different then!" but <a href = "https://docs.google.com/spreadsheets/d/15EWu1dzYvL41hYpmNXPIelCvc8A8XIIkPZIdgiUI1Sc/edit?usp=sharing">I checked</a>: between 1918 - 1930, breakeven stolen base success rates were well above 50% across all situations, so he probably should've been staying put. 
+		</p>
+
+		<p>
+			At the other end of the table, we have...Chase Utley? <a href = "https://fivethirtyeight.com/features/chase-utley-is-the-unluckiest-man-in-baseball/">The unluckiest man in baseball</a> (in early 2015 anyway)? I don't particularly remember him for his speed and indeed, according to <a href = "https://baseballsavant.mlb.com/savant-player/chase-utley-400284?stats=statcast-r-hitting-mlb">Baseball Savant</a> his sprint speed was slightly above average at best. His highest stolen base total for a season was 23 in 2009, a year in which he wasn't caught once for a 100% success rate. In fact, of these top ten names, only Tim Raines (4 times from 1981 - 1984) and Mike Trout (in 2012, his first full season) ever led their league in stolen bases. Utley and Werth never even had a season in the top ten of base stealers! 
+
+			<!--Carlos Beltran was a top ten base stealer 5 times, Dyson 7 times, Matsui once, Byrnes once, Trout 4 times, McLouth once, Reese 3 times, Raines 11 times.-->
+		</p>
+
+		<p>
+			It's fun to speculate how these players like Utley, and the even slower Werth, maintained their high success rates over their careers. My best guess is that they were good at identifying situations in which they would have a high probability of success: a pitcher who is slow to the plate or not holding them on, a catcher with a weak arm, fielders poorly positioned to receive a throw. Perhaps they weren't the fastest, but got great jumps to make up for it. Or, noticing that they were teammates from 2007 - 2010, was it that the Phillies had exceptional base coaches during this time?
+		</p>
+
+		<p>
+			All of this suggests more questions than it answers about evaluating the impact of a stolen base and the stealing prowess of players throughout history, so I'll end this post with one that I'm especially intrigued by. How can we measure the <em>impact</em> of a stolen base on the <em>game outcome</em>? This requires something different than the run expectancy analysis we did earlier, since it doesn't take into account the score of the game at the time of the steal. A stolen base in the third inning of a two run game just doesn't seem as impactful as a stolen base in the 9th inning of a tie game (think Dave Roberts' memorable steal of second base in the 2004 ALCS). Is there a way to look at each stolen base (in a season, player's career, or all of MLB history) and quantify how the steal (or caught stealing!) affected the game's outcome? What would such an analysis suggest in terms of strategy --- do teams benefit from being more conservative or aggressive in these different game environments? Which players had the <em>most game impact</em> on the basepaths throughout their careers, and are they the players one might expect?
+		</p>
+
+		<!--
+
+		<h3>But who <em>should</em> be stealing bases</h3>
+
+		<p>
+			In my <a href = "./blog_talking_baseball.html">previous post</a> I discussed how average run expectancy is used to value things like singles, doubles, and home runs. What about stolen bases? Let's say there's a runner on first base with no outs. The average run expectancy is about 0.831 (assuming a run environment of 4.15 runs per game, see <a href = "https://library.fangraphs.com/misc/re24/">this FanGraphs article</a>). If the runner successfully stole second base, the run expectancy jumps to 1.068, for a change of 0.237 runs. In the same situtation but with one or two outs, a successful steal of second base is worth 0.155 or 0.091 runs, respectively.
+		</p>
+
+		<p>
+			The trick, of course, is not to get caught! With no outs, if the runner is caught stealing, there's now one out and no runners on base. This state has a run expectancy of 0.243, for a difference of -0.588 runs. Similarly, with one or two outs we find that getting caught is worth -0.394 or -0.214 runs. Thus stealing second base comes with real risk to expected runs, for a relatively small benefit.
+		</p>
+
+		<p>
+			To help us decide when we should be stealing, and with which runners, let's find the expected value of the change in run expectancy on a stolen base attempt. If \(RE_{end}\) is our new run expectancy after the attempted steal, then we have
+			\[E\left( RE_{end} \right) = SB\% \cdot RE_{success} + (1 - SB\%) \cdot RE_{caught}\]
+			where \(SB\%\) is the chance of success on the stolen base. Thus the expected value, in change in run expectancy above average, of a stolen base attempt is given by
+			\[E\left( RE_{end} \right) - RE_{start}.\]
+			In the case of no outs and a runner on first, this becomes
+			\[SB\% \cdot RE^0_{020} + (1 - SB\%) \cdot RE^1_{000} - RE^0_{100}\]
+			where \(RE^i_{xyz}\) indicates the run expectancy with \(i\) outs and \(xyz\) denotes the baserunner configuration (e.g. 000 for bases empty, 020 for a runner on second, etc).
+		</p>
+
+		<p>
+			Of course, we don't know what the chance of success is! <em>But that's not the point.</em> We'll use this run expectancy calculation to determine <em>what SB% we need</em> in order to make stealing worthwhile, from a run expectancy point of view. For now, "worthwhile" means that we expect a positive change in run expectancy. So, we set up a linear inequality and solve for SB%,
+						\[SB\% \cdot RE^0_{020} + (1 - SB\%) \cdot RE^1_{000} - RE^0_{100} > 0\]
+						\[\implies SB\% > 71.3\%.\]
+			We'll call this the <em>breakeven success rate</em> for stealing bases with no outs and a runner on first. What it tells us is that if we are at least 71.3% sure that our runner will be successful in the stolen base attempt, then sending the runner has a positive effect on run expectancy. Applying this strategy over and over in this situation (assuming the true success rate is above 71.3% and we're in the same run environment) would likely lead to positive outcomes from a run expectancy point of view.
+		</p>
+
+		<p>
+			Of course, we don't have a great way of estimating the true rate \(SB\%\). We can use a runner's season or career success rate, but past performance does not necessarily indicate future success. We might try to fit a runner's sprint speed to their success rate, but this sounds like a problem for another date. It also doesn't take into account differences in pitcher motion, pitch selection (fastballs reach the plate sooner and are harder to steal on), and catcher ability. Instead, I think of this as a manager's tool of understanding the risks and rewards associated with stealing second base (with no outs in this run environment). They should be about 71.3% confident in the runner in this particular situation just to break even. 
+		</p>
+
+		<p>
+			I went ahead and computed the breakeven success rate for several stolen base situations below, using the same sample run expectancy data. Here's what I got:
+		<center><table>
+			<tr>
+				<th>Runners</th>
+				<th>0 out</th>
+				<th>1 out</th>
+				<th>2 out</th>
+			</tr>
+
+			<tr>
+				<td>100</td>
+				<td>74.2%</td>
+				<td>72.6%</td>
+				<td>72.7%</td>
+			</tr>
+
+			<tr>
+				<td>020</td>
+				<td>75.4%</td>
+				<td>70.4%</td>
+				<td>84.6%</td>
+			</tr>
+
+			<tr>
+				<td>120</td>
+				<td>61.2%</td>
+				<td>55.9%</td>
+				<td>78.3%</td>
+			</tr>
+
+			<tr>
+				<td>103</td>
+				<td>67.3%</td>
+				<td>79.0%</td>
+				<td>86.7%</td>
+			</tr>
+		</table></center>
+		With a runner on first in all situations, the breakeven success rate is just above 70%. If I'm managing, that tells me that no matter how many outs there are, if I'm at least 75% confident in my runner, stealing is probably a good move.
+	</p>
+
+	<p>
+		More surprising to me are the other rows in the table. The breakeven success rate is right around 70% again for a runner on second base stealing third! This means we should have about the same amount of confidence in the runner to ask them to steal third base. Now, this doesn't tell us if it's any harder or easier to steal third base versus second base. It just says that the balance of risk and reward is similar to the previous situation of stealing second. This came as something of a surprise to me from a baseball perspective, as the runner on second base is already in scoring position, ready to score on most hits to the outfield. It does make sense that doing so is more risky with two outs than one or none, since with two outs there is no possibility of a sacrifice fly scoring the runner after they've stolen third. See <a href = "https://www.espn.com/mlb/columns/story?columnist=kurkjian_tim&id=5125738">this ESPN article from 2010</a> for some anecdotes about stealing third.
+	</p>
+
+	<p>
+		The last two rows involve stealing with two runners on base. With runners on first and second (labeld "120" above), I'm assuming a double steal --- if successful, the runners will be at second and third, and I'm assuming the catcher attempts to throw out the runner heading to third. This is a risky maneuver, and not one I see often (though I don't have data to back that up), so it's surprising to see the breakeven success rate considerably lower than the other two! It's actually less risky from an expected runs point of view than just asking the runner on second to steal third base! I wonder why more teams aren't double stealing with runners on first and second. 
+	</p>
+
+	<p>
+		The last row above deals with stealing with runners on the corners, and there's a bit more here than meets the eye. At first glance, these are pretty high breakeven success rates, indicating that there's a lot of risk in attempting to steal second with a runner already on third. But we used to do this <em>all the time</em> when I played in high school. It was understood that with runners on the corners, the runner at first would <em>always</em> take second, hoping to goad an eager catcher into throwing across the diamond while the runner on third sprints for home. While our JV baseball team had a lot of success with this strategy (most of the time the catchers didn't attempt a throw), major league fielders have strong enough arms to thwart it. Still, they run the risk of airmailing the ball into center field, which will certainly allow the run to score.
+	</p>
+
+	<p>
+		If we wanted to test the strategy of attempting a steal of second and sending the other runner home if there's a throw, we'd want to have an idea of the liklihood the catcher throws to second at all (if not it's second and third), whether an out is made at second, and whether an out is made on a throw to the plate.
+	</p>
+
+		<h3>Testing MathJax</h3>
+
+		Displayed equation
+		\[x = \frac{-b \pm \sqrt{b^2 - 4ac}}{2a}.\]
+		That was the quadratic formula. Inline equations look like \(y = mx + b\).
+
+		Aligned things
+		\[
+		\begin{aligned}
+			\text{Babe Ruth} & 100 & 48% \\
+			\text{Carlos Beltran} & 300 & 82%
+		\end{aligned}
+		\]
+
+		html table
+		<center><table>
+			<tr>
+				<th>Name</th>
+				<th>SB</th>
+				<th>SB%</th>
+			</tr>
+
+			<tr>
+				<td>1. Chase Utley</td>
+				<td>154</td>
+				<td>87.5%</td>
+			</tr>
+
+			<tr>
+				<td>2. Carlos Beltran</td>
+				<td>312</td>
+				<td>86.4%</td>
+			</tr>
+
+			<tr>
+				<td>3. Jayson Werth</td>
+				<td>132</td>
+				<td>85.2%</td>
+			</tr>
+
+			<tr>
+				<td>4. Jarrod Dyson</td>
+				<td>250</td>
+				<td>85.0%</td>
+			</tr>
+
+			<tr>
+				<td>5. Kazuo Matsui</td>
+				<td>102</td>
+				<td>85.0%</td>
+			</tr>
+
+			<tr>
+				<td>6. Eric Byrnes</td>
+				<td>129</td>
+				<td>84.9%</td>
+			</tr>
+
+			<tr>
+				<td>7. Mike Trout</td>
+				<td>200</td>
+				<td>84.8%</td>
+			</tr>
+
+			<tr>
+				<td>8. Nate McClouth</td>
+				<td>133</td>
+				<td>84.7%</td>
+			</tr>
+
+			<tr>
+				<td>9. Pokey Reese</td>
+				<td>144</td>
+				<td>84.7%</td>
+			</tr>
+
+			<tr>
+				<td>10. Tim Raines</td>
+				<td>808</td>
+				<td>84.7%</td>
+			</tr>
+
+			<tr>
+				<td></td>
+				<td>&#8942;</td>
+				<td></td>
+			</tr>
+
+			<tr>
+				<td>40. Rickey Henderson</td>
+				<td>1406</td>
+				<td>80.8%</td>
+			</tr>
+
+			<tr>
+				<td></td>
+				<td>&#8942;</td>
+				<td></td>
+			</tr>
+
+			<tr>
+				<td>505. Babe Ruth*</td>
+				<td>110</td>
+				<td>48.5%</td>
+			</tr>
+		</table></center>
+
+		note that this was 2019 data from the Lahman database. Active players Mike Trout and Jarrod Dyson have dropped slightly, but both still make the top 10. I don't know if anyone else has joined this list.
+
+		Billy Hamilton has 314 career SB and his success rate is about 81.5%
+
+		* Babe Ruth had 13 stolen bases between 1914 and 1919, for which no CS data is available. We're also missing CS data for his final 1935 season. 
+
+		SELECT playerID, sum(SB) as Career_SB, sum(SB)/(sum(SB) + sum(CS)) as Career_PCT
+		FROM batting
+		WHERE CS is not null
+		GROUP BY playerID
+		HAVING sum(SB) > 99
+		ORDER BY Career_PCT DESC;
+
+		utleych01	154	22	0.8750
+beltrca01	312	49	0.8643
+werthja01	132	23	0.8516
+dysonja01	250	44	0.8503
+matsuka01	102	18	0.8500
+byrneer01	129	23	0.8487
+troutmi01	200	36	0.8475
+mclouna01	133	24	0.8471
+reesepo01	144	26	0.8471
+raineti01	808	146	0.8470
+
+		<h2>Outline</h2>
+
+		<a href = "https://gregstoll.com/~gregstoll/baseball/stats.html#V.0.1.0.1.0.0">Greg Stoll's Win Expectancy Finder</a> -->
+
+
+</div>
+</body>
+
+</html>

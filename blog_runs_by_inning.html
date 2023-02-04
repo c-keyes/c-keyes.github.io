@@ -1,0 +1,670 @@
+<!DOCTYPE html>
+
+<html>
+
+<head>
+	<title>Christopher Keyes - Blog</title>
+	<link rel="stylesheet" type="text/css" href="style.css" />
+	<script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+	<script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+	<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+
+<body>
+	<header>
+		Christopher Keyes
+	</header>
+
+	<script src="nav.js"></script>
+
+	<div id="rounded">
+
+		<h2>Talking Baseball: Run Scoring by Inning in 2021</h2>
+
+			<p><em>(Originally published on July 10, 2022)</em></p>
+
+			<p><em>This is part of a series of posts on sabermetrics and the mathematics of baseball. You can find more <a href = "./blog_talking_baseball.html">here</a>.</em></p>
+
+			<p>
+				I have <a href="./blog_talking_baseball.html">posted about run expectancy</a> here before. The idea is that in order to evaluate the impact of an individual performance or team strategy on scoring runs, one must first have a baseline for how many runs one can expect to score in various situations (e.g. with a runner on first base and 1 out). To get this baseline, we take an average, counting up how many times each base-out situation occurred, summing up the runs scored in the inning thereafter, and dividing.
+			</p>
+
+			<p>
+				Until recently, I hadn't actually attempted these calculations myself, instead relying on data provided by others. So to get some practice manipulating raw play-by-play data --- and to play with other fun ways of breaking down run scoring --- I downloaded data describing each play of the 2021 MLB regular season from <a href="https://www.retrosheet.org/game.htm">Retrosheet</a>. This data is copyrighted by Retrosheet and available (along with past seasons going back decades!) free of charge on their website. Here's the run expectancy matrix I computed for the 2021 season:
+			</p>
+
+			<center><table style="border-spacing: 10px"><caption>Figure 1: Run Expectancy Matrix, 2021</caption>
+			<tr>
+				<th>Runners</th>
+				<th>0 out</th>
+				<th>1 out</th>
+				<th>2 out</th>
+			</tr>
+
+			<tr>
+				<th>000</th>
+				<td>0.508</td>
+				<td>0.266</td>
+				<td>0.102</td>
+			</tr>
+
+			<tr>
+				<th>100</th>
+				<td>0.917</td>
+				<td>0.533</td>
+				<td>0.229</td>
+			</tr>
+
+			<tr>
+				<th>020</th>
+				<td>1.127</td>
+				<td>0.691</td>
+				<td>0.326</td>
+			</tr>
+
+			<tr>
+				<th>120</th>
+				<td>1.528</td>
+				<td>0.919</td>
+				<td>0.448</td>
+			</tr>
+
+			<tr>
+				<th>003</th>
+				<td>1.369</td>
+				<td>0.956</td>
+				<td>0.380</td>
+			</tr>
+
+			<tr>
+				<th>103</th>
+				<td>1.740</td>
+				<td>1.128</td>
+				<td>0.490</td>
+			</tr>
+
+			<tr>
+				<th>023</th>
+				<td>2.117</td>
+				<td>1.395</td>
+				<td>0.587</td>
+			</tr>
+
+			<tr>
+				<th>123</th>
+				<td>2.448</td>
+				<td>1.676</td>
+				<td>0.824</td>
+			</tr>
+		</table></center>
+
+		<p>
+			The values above agree pretty closely with <a href="https://gregstoll.com/~gregstoll/baseball/stats.html#V.0.1.0.1.0.0.2021.2021">Greg Stoll's values for 2021</a>. Some disagreement is to be expected, as I left in shortened games (including 7 inning doubleheaders) and extra inning games, but excluded the postseason. 
+		</p>
+
+		<p>
+			One interesting point (which may come up again in a future post) is how to handle walk-offs. That is, if the home team scores the go-ahead run in the 9th inning or later, the game immediately ends, before three outs are made. Should we include these innings in our run expectancy calculations? After all, if the inning ends before three outs are made, the team <em>could have</em> possibly scored more runs, so our computed run expectancy values might be slightly too low. For now, I'll simply ignore this, arguing that these innings are few enough that their impact is small.
+		</p>
+
+		<p>
+			Now for a fun fact: the <em>least common</em> base-out situation is a runner on third with 0 outs. This occurred only 458 times in the 2021 season. (For comparison, no runners on and 0 outs occurred 44,308 times.) This isn't necessarily surprising, as I can think of only a triple or some combination of a no-out hit/walk/HBP and steals/wild pitches/passed balls/balks getting a runner to third with no outs. <!--For context, triples are quite rare, occurring in only about 0.37% of plate appearances in 2021 (calculated using 2021 season data from <a href="https://www.baseball-reference.com/leagues/majors/2021.shtml">Baseball Reference</a>). -->
+		</p>
+
+		<h3>Run expectancy inning-by-inning</h3>
+
+			<p> 
+				With raw data at our fingertips, we can break down run expectancy in other interesting ways. Today I'll at innings, excluding extra innings for now. Below we plot the run expectancy --- equivalently, the average runs scored --- in each frame from the 1st through the 9th. 
+			</p>
+
+			<div><center>
+			<canvas id="RE_by_inning" style="width:100%;max-width:600px;max-height:400px"></canvas>
+			</center></div>
+
+			<p>
+				I was a bit surprised to see that the 1st inning was by far the highest scoring, followed by a sizeable dip in the 2nd. As it turns out, this phenomenon isn't unique to 2021, and has been well documented; see <a href="https://www.beyondtheboxscore.com/2011/7/3/2255959/all-innings-are-not-created-equal-how-run-scoring-varies-by-inning">this article</a> which includes AL/NL comparisons, <a href="https://community.fangraphs.com/why-are-so-many-runs-scored-in-the-bottom-of-the-first-inning/">this Fangraphs post</a> which also looks at home/visitor splits, and <a href="https://www.mlb.com/news/highest-scoring-inning-is-surprising">this article from 2019</a>, in which the 3rd inning was actually the highest scoring.
+			</p>
+
+			<p>
+				The most likely explanation seems to be that the first inning is the only one in which teams are <em>guaranteed</em> to have the top of their order batting. Baseball teams tend to put their best batters, who are more likely to get on base and bat each other in, near the top of the order. The second inning is then most likely to begin with the middle or bottom of the order, with batters who are comparatively more likely to get out than to get on base and score, resulting in the dip in run expectancy.
+			</p>
+
+			<p>
+				This evens out a bit in the middle innings (3rd - 6th), before taking dips in the 7th and 9th innings, which may be partially explained by teams replacing their tiring starters with their late-inning shutdown relief arms. In the 9th in particular, we might also consider that the bottom half isn't played if the home team leads. In these games, we're only including in our average the (losing) visiting team. Even if the home team bats, they may be limited in the number of runs they score: with the score tied in the bottom of the 9th, a single run ends the game. In this case, excluding the possibility of a walkoff home run, the home team isn't even able to score 2 or more runs.
+			</p>
+
+			<p>
+				To smooth out some of these issues, we can try asking "does the team score or not?" and compute the proportion of innings in which the batting team scored 1 or more runs.
+			</p>
+
+			<div><center>
+			<canvas id="runs_by_inning" style="width:100%;max-width:600px;max-height:400px"></canvas>
+			</center></div>
+
+			<p>
+				Most of the same trends are present here. However, it appears that in some innings the scoring probabilities are similar, but the run expectancy differs. For example, the 7th and 8th inning have nearly identical scoring probabilities (26.7% and 26.8% respectively) but we only expect 0.492 runs in the 7th, compared to 0.513 runs in the 8th. On the other hand, the 9th inning had the lowest run expectancy at 0.449, but the second lowest scoring probability at 25.9% of the time. It was the 2nd inning with the lowest scoring probability (24.9%) and second lowest run expectancy (0.461).
+			</p>
+
+			<p>
+				I don't have a great explanation for these observations at the moment. One thought is that in late innings, the pitching team is either using their best arms to keep a tight game close, or content to let their weaker throwers allow some runs score if it's a blowout. This sort of dichotomy could explain late innings seeming to have a lower scoring probability but slightly elevated run expectancy, but this is probably worth following up on.
+			</p>
+
+		<h3>Measuring the leadoff batter effect</h3>
+
+			<p>
+				Let's try to test the theory that teams scored more in the 1st inning (in 2021 at least) <em>because</em> they started with the top of the order. Do teams tend to score more or less runs when certain batters lead off innings? The answer appears to be a resounding yes!
+			</p> 
+
+			<div><center>
+			<canvas id="RE_by_leadoff_batter" style="width:100%;max-width:600px;max-height:400px"></canvas>
+			</center></div>
+
+			<p>
+				When the inning is led off by the 1st, 2nd, or 3rd hitter in the lineup, more runs tend to score than average. This drops off considerably when the inning starts with the middle of the order, and increases again as we reach the bottom of the lineup. This seems consistent with our proposed explanation earlier: MLB teams construct their lineups with the better hitters near the top of the order, so when an inning starts with the leadoff hitter (or even the 9th hitter with the leadoff man on deck), more runs are likely to be scored. Starting an inning with the middle of the order leaves the bottom of the order to drive in any baserunners, which results in fewer runs scored on average.
+			</p>
+
+			<p>
+				Of course, teams don't have the same lineups every day (or within a game with pinch hitters). Managers often move players up or down in the lineup from game to game, depending on how they are playing, and may well be doing so with different strategies in mind! Still, averaging across MLB in 2021 seems to show that lineup composition does indeed have an impact on run scoring, with the most runs scored when the inning begins with the top of the lineup.
+			</p>
+
+			<p>
+				But maybe there's something else going on in the 1st inning contributing to the spike. Pitchers are nervous or not warmed up enough, hitters are fresh out of batting practice before getting fatigued. Perhaps this just makes it <em>look</em> like leadoff hitters do best when starting an inning. In fact, if we look at all 4109 times a leadoff hitter was the first batter of an inning <em>other than the 1st inning</em>, the average runs scored is even higher, at 0.603! This leads me to believe that lineup construction contributes more than those other possibile explanations of a 1st inning spike. 
+			</p>
+
+			<p>
+				So who is <em>actually</em> leading off in each inning after the 1st? The second inning --- with its huge drop in average runs scored --- is most likely to begin with the 4th, 5th, or 6th hitter. From there things start to even out, until by the 8th and 9th, the inning is almost equally likely to be led off by any spot in the batting order. The data for all innings is depicted in the colorful chart below.
+			</p>
+
+			<div><center>
+			<canvas id="who_leads_off" style="width:100%;max-width:600px;max-height:400px"></canvas>
+			</center></div>
+
+			<p>
+				Since we know how often each lineup spot leads off each inning, and the average runs scored when each batter leads off an inning, we can attempt to feed these into a model that <em>predicts</em> the (average) runs scored by inning using a weighted average. Then we can compare to the actual values, to see how close we got. Explicitly, if \(\mathrm{RE}_{\mathrm{inn}}^{\mathrm{pred}}(i)\) is our prediction for the i-th inning, we take
+				\[\mathrm{RE}_{\mathrm{inn}}^{\mathrm{pred}}(i) = \sum_{j=1}^9 P(i,j) \cdot \mathrm{RE}_{\mathrm{LH}}(j),\]
+				where \(P(i,j)\) is the proportion of i-th innings led off by the j-th spot in the order (i.e. the data in <a href="#who_leads_off">Figure 5</a>) and \(\mathrm{RE}_{\mathrm{LH}}(j)\) is the expected runs for an inning led off by the j-th hitter in the lineup (i.e. the data from <a href="#RE_by_leadoff_batter">Figure 4</a>). Overlaying these predictions with the <em>actual</em> run expectancy by inning data from <a href="#RE_by_inning">Figure 2</a>, we see they are reasonably close.
+			</p>
+
+			<div><center>
+			<canvas id="RE_pred_by_inning" style="width:100%;max-width:600px;max-height:400px"></canvas>
+			</center></div>
+
+			<p>
+				Our prediction in green has an explained variance of about 0.50, which may suggest that following statement holds water: "<em>the leadoff batter's position in the lineup explains about half of the variability in inning-by-inning run expectancy</em>." Other factors, including closers coming in for the 9th inning, nervous pitchers in the 1st, and hitters having more success the second and third time facing a starting pitcher may all contribute to explaining the other half of the variability.
+			</p>
+
+			<p>
+				I repeated these calculations with scoring probability instead of run expectancy, achieving similar results which I won't include here. The explained variance was comparable at 0.49.
+			</p>
+
+		<h3>Other base-out situations</h3>
+
+			<p>
+				We could further break down inning-by-inning run scoring by base-out situation, to make a full run expectancy matrix for each inning. This is a little much to include here, but the data and some visuals are <a href="https://docs.google.com/spreadsheets/d/1fd2RlO51Jp5_xF8aEAs6_1DyvsAj0tjcSfTruGyVcZA/edit?usp=sharing">available at this spreadsheet</a>. Note that there is considerably less data available in certain situations (namely with a runner at 3rd with 0 outs) and in late innings, so these should be used with a grain of salt. 
+			</p>
+
+			<p>
+				Let's highlight two situations here and contrast them with the trends we observed earlier. Below we have plotted the run expectancy with the bases empty and no outs (in blue) and that with the bases loaded and 2 outs (in green).
+			</p>
+
+			<div><center>
+			<canvas id="0vs23_comparison" style="width:100%;max-width:600px;max-height:400px"></canvas>
+			</center></div>
+
+			<p>
+				The blue bars are almost identical to the inning-by-inning chart above, as one should expect, since each inning starts in this situation. In particular, we have the same 2nd inning dip, followed by a middle inning rebound, and a late inning dip. 
+			</p>
+
+			<p>
+				The green bars however, reveal a different trend. They are lowest in the 1st inning and peak in the 2nd, before bouncing around a bit and tailing off in the late innings. From the 1st to 2nd innings, this is the opposite trend! To explain why this is consistent, consider that with 2 outs and the bases loaded, <em>at least</em> 5 batters have come to the plate in the inning so far. Thus if this happens in the 1st, we are likely to have the 6, 7, or 8 hitter up to bat resulting in a lower run expectancy.
+			</p>
+
+			<p>
+				If this were to happen in the 2nd inning, assuming 4 or 5 batters hit in the 1st inning (average is 4.3 batters), then it's likely that the top of the order is back, ready to drive in the runs! So even though the trend has reversed, it seems likely to me that this is again influenced by lineup composition. (I'll leave it to you to figure out which positions in the batting order produce the greatest run expectancy in each base-out situation!) The observed decline in the late innings could again be explained by dominant relief arms coming in, or possibly even specialists tasked with facing a single batter to get their team out of the tight spot! 
+			</p>
+
+		<h3>What's next?</h3>
+
+		<p>
+			All of this is specific to the context of the 2021 MLB season, <em>reflecting</em> how MLB managers constructed their lineups in 2021 season. The patterns we observed and conclusions we might try to draw may not be consistent year-to-year (though this is something that could be investigated in Retrosheet!) and a similar investigation into other seasons or eras might reveal interesting trends.
+		</p>
+
+		<p>
+			Another fun follow up might be to see if MLB managers are constructing their lineups optimally. Put another way, if given an "average" MLB lineup of hitters, what batting order is expected to produce the most runs? With some way to simulate innings and games with different lineups, one could try scrambling around a lineup in different ways to see which are most effective. Who knows? Perhaps isn't in fact optimal to stack your best hitters at the top of the batting order, but instead to spread them throughout the lineup.
+		</p>
+
+		<p>
+			A more immediately answerable question to end on: <em>how does this all change in extra innings</em>? The data here is more limited, as only 432 regular season 10th (half) innings were played (along with 124 11ths and only 32 12ths). With the designated runner starting on second base, more than half of these innings result in one or more run.
+		</p>
+
+			<div><center>
+			<canvas id="runs_by_inning_extras" style="width:100%;max-width:600px;max-height:400px"></canvas>
+			</center></div>
+
+		<p>
+			A better comparison might be the probability of scoring with 0 outs and a runner on second base, across all innings.	
+		</p>
+
+			<div><center>
+			<canvas id="scoring_BOsit_2" style="width:100%;max-width:600px;max-height:400px"></canvas>
+			</center></div>
+
+		<p>
+			It looks like scoring probabilities in the 10th and 11th are on the lower side, but both are higher than the 9th. But the sample sizes here are small enough that I'm unwilling to attempt to draw any real conclusions. With more data and thought, I hope to better understand the conditions that affect run scoring in these crucial innings, and ultimately reveal potential strategies.
+		</p>
+
+			<!--
+
+			<div><center>
+			<canvas id="RE_BOsit_2" style="width:100%;max-width:600px;max-height:400px"></canvas>
+			</center></div>
+
+		-->
+<script>
+var innings = ["1st", "2nd", "3rd", "4th", "5th", "6th", "7th", "8th", "9th"];
+var scoring_prob = [0.295, 0.249, 0.281, 0.283, 0.286, 0.286, 0.267, 0.268, 0.259];
+var barColors = "blue";
+var RE = [0.554960889, 0.460683409, 0.524495677, 0.517702758, 0.517908604, 0.520601566, 0.491673605, 0.512837109, 0.448796866];
+
+// make runs_by_inning bar chart
+new Chart("runs_by_inning", {
+  	type: "bar",
+ 	data: {
+    	labels: innings,
+    	datasets: [{
+      		backgroundColor: barColors,
+      		data: scoring_prob
+    	}]
+  	},
+  	options: {
+  		plugins: {
+    		legend: {display: false},
+    		title: {
+      			display: true,
+      			text: "Figure 3: Likelihood of scoring 1 or more runs by inning, 2021"
+    		}
+    	},
+    	scales: {
+    		y: {
+    			title: {
+    				display: true,
+    				text: "Fraction of innings in which 1 or more runs scored"
+    			}
+    		},
+    		x: {
+    			title: {
+    				display: true,
+    				text: "Inning"
+    			}
+    		}
+    	}
+  	},
+});
+
+// make runs_by_inning bar chart
+new Chart("RE_by_inning", {
+  	type: "bar",
+ 	data: {
+    	labels: innings,
+    	datasets: [{
+      		backgroundColor: barColors,
+      		data: RE
+    	}]
+  	},
+  	options: {
+  		plugins: {
+    		legend: {display: false},
+    		title: {
+      			display: true,
+      			text: "Figure 2: Run expectancy by inning, 2021"
+    		}
+    	},
+    	scales: {
+    		y: {
+    			title: {
+    				display: true,
+    				text: "Average runs scored"
+    			}
+    		},
+    		x: {
+    			title: {
+    				display: true,
+    				text: "Inning"
+    			}
+    		}
+    	}
+  	},
+});
+
+var RE_by_leadoff = [0.577004572, 0.569586244, 0.569577465, 0.455624757, 0.455466897, 0.480019734, 0.465956461, 0.5015681, 0.523163553];
+
+// make runs_by_inning bar chart
+new Chart("RE_by_leadoff_batter", {
+  	type: "bar",
+ 	data: {
+    	labels: innings,
+    	datasets: [{
+      		backgroundColor: barColors,
+      		data: RE_by_leadoff
+    	}]
+  	},
+  	options: {
+  		plugins: {
+    		legend: {display: false},
+    		title: {
+      			display: true,
+      			text: "Figure 4: Run expectancy by leadoff batter, 2021"
+    		}
+    	},
+    	scales: {
+    		y: {
+    			title: {
+    				display: true,
+    				text: "Average runs scored in inning"
+    			}
+    		},
+    		x: {
+    			title: {
+    				display: true,
+    				text: "Position in batting order of leadoff hitter"
+    			}
+    		}
+    	}
+  	},
+});
+
+var prop_led_off_1 = [1, 0.01132153149, 0.1774392754, 0.08233841087, 0.1255660766, 0.1363823651, 0.1080349709, 0.1229773463, 0.09960828204];
+var prop_led_off_2 = [0, 0.002675998353, 0.1066282421, 0.1405928366, 0.0802799506, 0.1479192419, 0.08243130724, 0.1199568501, 0.1049244544];
+var prop_led_off_3 = [0, 0.001646768217, 0.05743104158, 0.1749691231, 0.06237134623, 0.137000412, 0.09450457952, 0.1177993528, 0.1046446558];
+var prop_led_off_4 = [0, 0.3678468506, 0.03890489914, 0.1768217373, 0.0613421161, 0.1172229089, 0.09887593672, 0.1031283711, 0.1175153889];
+var prop_led_off_5 = [0, 0.2815973652, 0.01934952655, 0.1459448333, 0.09221902017, 0.09991759374, 0.1207327227, 0.1035598706, 0.1138780078];
+var prop_led_off_6 = [0, 0.1755866612, 0.01111568547, 0.105804858, 0.1249485385, 0.09147095179, 0.1267693589, 0.1024811219, 0.1217123671];
+var prop_led_off_7 = [0, 0.09304240428, 0.1525319061, 0.08295594895, 0.1556195965, 0.07993407499, 0.1378018318, 0.09644012945, 0.1138780078];
+var prop_led_off_8 = [0, 0.04857966241, 0.2262247839, 0.0568135035, 0.166735282, 0.08899876391, 0.1242714405, 0.1158576052, 0.1161163962];
+var prop_led_off_9 = [0, 0.01770275834, 0.2103746398, 0.03375874846, 0.1309180733, 0.1011536877, 0.1065778518, 0.1177993528, 0.1077224398];
+
+// make runs_by_inning bar chart
+new Chart("who_leads_off", {
+  	type: "bar",
+ 	data: {
+    	labels: innings,
+    	datasets: [{
+      		backgroundColor: barColors,
+      		data: prop_led_off_1,
+      		label: "1"
+    	},
+    	{
+      		backgroundColor: "red",
+      		data: prop_led_off_2,
+      		label: "2"
+    	},
+    	{
+      		backgroundColor: "yellow",
+      		data: prop_led_off_3,
+      		label: "3"
+    	},
+    	{
+      		backgroundColor: "green",
+      		data: prop_led_off_4,
+      		label: "4"
+    	},
+    	{
+      		backgroundColor: "cyan",
+      		data: prop_led_off_5,
+      		label: "5"
+    	},
+    	{
+      		backgroundColor: "orange",
+      		data: prop_led_off_6,
+      		label: "6"
+    	},
+    	{
+      		backgroundColor: "purple",
+      		data: prop_led_off_7,
+      		label: "7"
+    	},
+    	{
+      		backgroundColor: "white",
+      		data: prop_led_off_8,
+      		label: "8"
+    	},
+    	{
+      		backgroundColor: "black",
+      		data: prop_led_off_9,
+      		label: "9"
+    	}]
+  	},
+  	options: {
+  		plugins: {
+    		legend: {
+    			display: true,
+    			title: {
+    				display: true,
+    				text: "Position in batting order"
+    			}
+    		},
+    		title: {
+      			display: true,
+      			text: "Figure 5: Who is leading off each inning? 2021"
+    		}
+    	},
+    	scales: {
+    		y: {
+    			stacked: true,
+    			title: {
+    				display: true,
+    				text: "Proportion of innings led off"
+    			},
+    			max: 1
+    		},
+    		x: {
+    			stacked: true,
+    			title: {
+    				display: true,
+    				text: "Inning"
+    			}
+    		}
+    	}
+  	},
+});
+
+var RE_pred = [0.5770045723, 0.4661193779, 0.5223042388, 0.5098847241, 0.5082659504, 0.5186097009, 0.5063058585, 0.5144047204, 0.5083350473];
+
+new Chart("RE_pred_by_inning", {
+  	type: "bar",
+ 	data: {
+    	labels: innings,
+    	datasets: [{
+      		backgroundColor: barColors,
+      		data: RE,
+      		label: "Actual"
+    	},
+    	{
+      		backgroundColor: "green",
+      		data: RE_pred,
+      		label: "Predicted"
+    	}]
+  	},
+  	options: {
+  		plugins: {
+    		legend: {display: true},
+    		title: {
+      			display: true,
+      			text: "Figure 6: Predicted vs actual runs by inning, 2021"
+    		}
+    	},
+    	scales: {
+    		y: {
+    			title: {
+    				display: true,
+    				text: "Average runs scored"
+    			}
+    		},
+    		x: {
+    			title: {
+    				display: true,
+    				text: "Inning"
+    			}
+    		}
+    	}
+  	},
+});
+
+var RE_bosit_0 = [0.556, 0.466, 0.522, 0.519, 0.518, 0.518, 0.495, 0.513, 0.448];
+var RE_bosit_23 = [0.689, 0.963, 0.789, 0.762, 0.916, 0.926, 0.825, 0.784, 0.715];
+
+new Chart("0vs23_comparison", {
+  	type: "bar",
+ 	data: {
+    	labels: innings,
+    	datasets: [{
+      		backgroundColor: barColors,
+      		data: RE_bosit_0,
+      		label: "000, 0 outs"
+    	},
+    	{
+      		backgroundColor: "green",
+      		data: RE_bosit_23,
+      		label: "123, 2 outs"
+    	}]
+  	},
+  	options: {
+  		plugins: {
+    		legend: {display: true},
+    		title: {
+      			display: true,
+      			text: "Figure 7: Run expectancies by inning, 2021"
+    		}
+    	}
+  	},
+});
+
+var innings_extras = ["1st", "2nd", "3rd", "4th", "5th", "6th", "7th", "8th", "9th", "10th", "11th", "12th"];
+var scoring_prob_extras = [0.295, 0.249, 0.281, 0.283, 0.286, 0.286, 0.267, 0.268, 0.259, 0.581, 0.556, 0.750];
+var runs_bosit_2 = [0.624413146, 0.603333333, 0.628398792, 0.572207084, 0.585164835, 0.671597633, 0.578313253, 0.648351648, 0.556451613, 0.574889868, 0.569230769, 0.742857143];
+var RE_bosit_2 = [1.300469484, 1.06, 1.178247734, 1.04359673, 1.159340659, 1.112426036, 1.057228916, 1.274725275, 1.044354839, 0.947136564, 1.146153846, 1.628571429];
+
+// make runs_by_inning bar chart w/ extras
+new Chart("runs_by_inning_extras", {
+  	type: "bar",
+ 	data: {
+    	labels: innings_extras,
+    	datasets: [{
+      		backgroundColor: barColors,
+      		data: scoring_prob_extras
+    	}]
+  	},
+  	options: {
+  		plugins: {
+    		legend: {display: false},
+    		title: {
+      			display: true,
+      			text: "Figure 8: Likelihood of scoring 1 or more runs by inning, 2021"
+    		}
+    	}
+  	},
+});
+
+new Chart("scoring_BOsit_2", {
+  	type: "bar",
+ 	data: {
+    	labels: innings_extras,
+    	datasets: [{
+      		backgroundColor: barColors,
+      		data: runs_bosit_2
+    	}]
+  	},
+  	options: {
+  		plugins: {
+    		legend: {display: false},
+    		title: {
+      			display: true,
+      			text: "Figure 9: Likelihood of scoring 1 or more runs with 0 outs, runner on 2nd, 2021"
+    		}
+    	}
+  	},
+});
+
+new Chart("RE_BOsit_2", {
+  	type: "bar",
+ 	data: {
+    	labels: innings_extras,
+    	datasets: [{
+      		backgroundColor: barColors,
+      		data: RE_bosit_2
+    	}]
+  	},
+  	options: {
+  		plugins: {
+    		legend: {display: false},
+    		title: {
+      			display: true,
+      			text: "Run expectancy with 0 outs, runner on 2nd, 2021"
+    		}
+    	}
+  	},
+});
+</script>
+
+		<!--
+
+			<h2>Outline and links</h2>
+
+			<a href="https://www.beyondtheboxscore.com/2011/7/3/2255959/all-innings-are-not-created-equal-how-run-scoring-varies-by-inning">Run scoring by inning, with AL/NL comparisons</a>
+
+			<a href="https://www.mlb.com/news/highest-scoring-inning-is-surprising">in 2019, the third inning was higher scoring than the first</a>
+
+			<a href="https://community.fangraphs.com/why-are-so-many-runs-scored-in-the-bottom-of-the-first-inning/">Home-visitor breakdown</a>
+
+			<a href="https://www.retrosheet.org/game.htm">The information used here was obtained free of
+     charge from and is copyrighted by Retrosheet</a>
+
+				<table class="charts-css column show-heading show-labels show-6-secondary-axes data-spacing-1" id="my-chart" >
+
+  				<caption> Likelihood of scoring, by inning (1st - 9th) </caption>
+
+  				<tbody>
+    				<tr>
+    					<th scope="row"> <small>1st</small> </th>
+      					<td style="--size: calc(0.294566/0.3); --color: rgba(0,121,255, 0.896);"> <small>29.5</small> </td>
+    				</tr>
+    				<tr>
+    					<th scope="row"> <small>2nd</small> </th>
+      					<td style="--size: calc(0.249485/0.3); --color: rgba(0,121,255, 0.445);"> <small>24.9</small> </td>
+    				</tr>
+    				<tr>
+    					<th scope="row"> <small>3rd</small> </th>
+      					<td style="--size: calc(0.281186/0.3); --color: rgba(0,121,255, 0.762);"> <small>28.1</small> </td>
+    				</tr>
+    				<tr>
+    					<th scope="row"> <small>4th</small> </th>
+      					<td style="--size: calc(0.283244/0.3); --color: rgba(0,121,255, 0.782);"> <small>28.3</small> </td>
+    				</tr>
+    				<tr>
+    					<th scope="row"> <small>5th</small> </th>
+      					<td style="--size: calc(0.285714/0.3); --color: rgba(0,121,255, 0.807);"> <small>28.6</small> </td>
+    				</tr>
+    				<tr>
+    					<th scope="row"> <small>6th</small> </th>
+      					<td style="--size: calc(0.285743/0.3); --color: rgba(0,121,255, 0.807);"> <small>28.6</small> </td>
+    				</tr>
+    				<tr>
+    					<th scope="row"> <small>7th</small> </th>
+      					<td style="--size: calc(0.266860/0.3); --color: rgba(0,121,255, 0.619);"> <small>26.7</small> </td>
+    				</tr>
+    				<tr>
+    					<th scope="row"> <small>8th</small> </th>
+      					<td style="--size: calc(0.267745/0.3); --color: rgba(0,121,255, 0.627);"> <small>26.8</small> </td>
+    				</tr>
+    				<tr>
+    					<th scope="row"> <small>9th</small> </th>
+      					<td style="--size: calc(0.258813/0.3); --color: rgba(0,121,255, 0.538);"> <small>25.9</small> </td>
+    				</tr>
+    			</tbody>
+
+			</table>
+		-->
+
+</div>
+</body>
+
+</html>

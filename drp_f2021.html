@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+
+<html>
+
+<head>
+	<title>Christopher Keyes - DRP Fall 2021</title>
+	<link rel="stylesheet" type="text/css" href="style.css" />
+</head>
+
+<body>
+	<header>
+		Christopher Keyes
+	</header>
+
+	<script src="nav.js"></script>
+
+	<div id="rounded">
+
+		<h2>
+			Elliptic curves DRP: Fall 2021
+		</h2>
+
+		<p> <strong>Textbook</strong>: <em>Rational Points on Elliptic Curves</em>, 2nd. ed., by Silverman and Tate.</p>
+
+		<p> <strong>More resources</strong>: Keith Conrad's <a href = "https://kconrad.math.uconn.edu/blurbs/">blurbs</a>. <a href = "https://kconrad.math.uconn.edu/blurbs/ugradnumthy/modarith.pdf">Modular arithmetic</a> will be helpful, as are his many on <a href = "https://kconrad.math.uconn.edu/blurbs/grouptheory/whygroups.pdf">groups</a>, <a href ="https://kconrad.math.uconn.edu/blurbs/grouptheory/order.pdf">orders of elements</a> in groups, and <a href = "https://kconrad.math.uconn.edu/blurbs/grouptheory/cyclicgp.pdf">cyclic groups</a>. </p>
+
+		<p> Here's a rough schedule. Expect this to be modified as we go! To be clear, you should read the listed sections and the exercies <em>before</em> that day's meeting. Bring your questions and problems that got you stuck, so we can talk about them! </p>
+
+		<h3>
+			Week 0 (9/9/2021)
+		</h3>
+
+		<p> <strong>Reading</strong>: Introduction </p>
+		<p> <strong>Exercises</strong>: none </p>
+
+		<h3>
+			Week 1 (9/16/2021)
+		</h3>
+
+		<p> <strong>Reading</strong>: 1.1 - 1.2, A.1 </p>
+		<p> <strong>Exercises</strong>: 1.1, 1.5, 1.7, 1.8, A.2
+		<ul>
+			<li> What does it mean to be <em>(non)singular</em>? </li>
+			<li> What are the <em>projective</em> line and plane? Where do they come from? </li>
+		</ul> </p>
+
+		<h3>
+			Week 2 (9/23/2021)
+		</h3>
+
+		<p> <strong>Reading</strong>: 1.3 - 1.4, A.2 </p>
+		<p> <strong>Exercises</strong>: 1.17, 1.19, 1.20, A.6 (what is this saying?), A.8
+		<ul>
+			<li> Convince yourself that <em>any</em> cubic can be written in Weierstrass form (you don't have to prove every step at the board, but you should read/check enough to be convinced)</li>
+			<li> Convince yourself that the group law works, is associative, and that the identity is the point at infinity (when in Weierstrass form) </li>
+			<li> (Optional but well worth it) Write a program to add points on an elliptic curve. You can do this in any language, but <em>Sage</em> may be fun to learn; it has lots of built in functionality for elliptic curves. You can access it online via <a href = "https://cocalc.com/">CoCalc</a></li>
+		</ul> </p>
+
+		<h3>
+			Week 3 (9/30/2021)
+		</h3>
+
+		<p> <strong>Reading</strong>: 2.1 - 2.3 </p>
+		<p> <strong>Exercises</strong>: 2.1, 2.4ab (requires some <a href = "https://kconrad.math.uconn.edu/blurbs/ugradnumthy/modarith.pdf">modular arithmetic</a>), 2.5ab (think about c), 2.6, 2.7
+		<ul>
+			<li> Why is the point at infinity of y^2 = f(x) always a <em>rational</em> point? (Think about the projective coordinates!)</li>
+			<li> The Weierstrass p-function is a bit strange. What you should take from the discussion on p. 41-42 is that over the complex numbers, an elliptic curve looks like C modulo a lattice, both geometrically <em>and</em> algebraically (the group structures are the same).</li>
+		</ul> </p>
+
+		<h3>
+			Week 4 (10/7/2021)
+		</h3>
+
+		<p> <strong>Reading</strong>: 2.4 - 2.5 </p>
+		<p> <strong>Exercises</strong>: 2.6, 2.7 (if you didn't last week), 2.12abdg, 2.13ab (cd if you want a challenge)
+		<ul>
+			<li> Section 2.4 is a bit dense, especially if you aren't familiar with p-adic numbers. Focus on the approach: if we add points whose coordinates have a prime p in the denominator, the power of p <em>increases</em> in the coordinates of the sum.</li>
+			<li> Appreciate Theorem 2.7! For example, an elliptic curve over Q <em>never</em> has a point of order 11. Wow!</li>
+		</ul> </p>
+
+		<h3>
+			Week 5 (10/14/2021)
+		</h3>
+
+		<p> <strong>Reading</strong>: Review of chapters 1, 2 </p>
+		<p> <strong>Exercises</strong>: Review exercies from weeks 1 - 4 </p>
+		
+		<h3>
+			Week 6 (10/21/2021) --- No meeting
+		</h3>
+
+		<p> Take a break or get a head start on Chapter 4!</p>
+
+		<h3>
+			Week 7 (10/28/2021)
+		</h3>
+
+		<p> <strong>Reading</strong>: 4.1 - 4.2 </p>
+		<p> <strong>Exercises</strong>: 4.2, 4.3ab, 4.4ab (if you've never done these before), 4.7 </p>
+		<ul>
+			<li>You might want to review some things about finite fields. See an abstract algebra textbook or try <a href="https://kconrad.math.uconn.edu/blurbs/galoistheory/finitefields.pdf">these notes</a>.</li>
+			<li>Try drawing a picture of an elliptic curve over Fp (like y^2 = x^3 + x + 1 on p. 118). Is this illuminating at all for you?</li>
+			<li>I consider section 4.2 extremely interesting, but not core to the rest of the chapter in some sense. You should read it and appreciate that finding <em>exact</em> counts of Fp-points on curves which are uniform in p can be difficult! </li>
+		</ul> </p>
+	
+		<h3>
+			Week 8 (11/4/2021)
+		</h3>
+
+		<p> <strong>Reading</strong>: 4.3 </p>
+		<p> <strong>Exercises</strong>: 4.2, 4.4ab (if you've never done these before), 4.7, 4.11 </p>
+		<ul>
+			<li>Definitely attempt computing the <em>group</em> E(Fp) for at least one curve E and one prime p. See Exercise 4.2 for example.</li>
+			<li>A powerful conclusion of this section is that we can understand the torsion in the <em>rational</em> points E(Q) by studying the points over <em>finite fields</em> E(Fp). See exercise 4.7 (and 4.11 for a more general one).</li>
+			<li>(Strongly recommend) Write a computer program to compute #E(Fp) for any prime p. If you can, make it work for any elliptic curve E. You can do this in pretty much any language, but if you do so in Sage you can check your answers with built-in functions.</li>
+		</ul> </p>
+		
+		<h3>
+			Week 9 (11/11/2021)
+		</h3>
+
+		<p> <strong>Reading</strong>: 4.4 </p>
+		<p> <strong>Exercises</strong>: 4.14 - 4.15 (if you've never tried these), 4.21
+		<ul>
+			<li>All of the exercises 4.14 - 4.19 are great practice for understanding the Euclidean algorithm and its complexity.</li>
+			<li>Exercise 4.21 suggests an example for elliptic curve factorization of 199843247. Can you come up with other examples of numbers to be factored via elliptic curves? Do you notice any ways to better choose the starting curve?</li>
+		</ul> </p>
+
+		<h3>
+			Week 10 (11/18/2021)
+		</h3>
+
+		<p> <strong>Reading</strong>: 4.5 </p>
+		<p> <strong>Exercises</strong>: 4.25, 4.26, 4.29
+		<ul>
+			<li>If you haven't yet, try writing a computer program (in Sage or other) to add points on elliptic curves over finite fields. Then you can use this to "do" elliptic curve cryptography - or try to "break" the ECDLP! See exercise 4.29.</li>
+			<li>The end of Section 4.5 mentions quantum computers. A great final project would be to learn the very basic idea of how they work, and why Shor's algorithm could break many cryptosystems!</li>
+		</ul> </p>
+
+		<h3>
+			Week 11 (11/25/2021) --- No meeting
+		</h3>
+
+		<p> Take a break and enjoy your Thanksgiving</p>
+
+		<h3>
+			Week 12 (12/2/2021)
+		</h3>
+
+		<p> <strong>Reading</strong>: Your choice! </p>
+		<p> Pick something that interests you and read/try it! This could be (re)reading a section of the book, solving a book exercise, an expository paper, writing some code, or anything else related to elliptic curves. </p>
+	</div>
+</body>
+
+</html>

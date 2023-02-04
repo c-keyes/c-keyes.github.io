@@ -1,0 +1,575 @@
+<!DOCTYPE html>
+
+<html>
+
+<head>
+	<title>Christopher Keyes - Blog</title>
+	<link rel="stylesheet" type="text/css" href="style.css" />
+	<script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+	<script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+</head>
+
+<body>
+	<header>
+		Christopher Keyes
+	</header>
+
+	<script src="nav.js"></script>
+
+	<div id="rounded">
+
+		<h2>Talking Baseball: Heuristics for Unlikely No Hitters</h2>
+
+			<p><em>(Originally published on March 20, 2022)</em></p>
+
+			<p><em>This is part of a series of posts on sabermetrics and the mathematics of baseball. You can find more <a href = "./blog_talking_baseball.html">here</a>.</em></p>
+
+		<p>
+			On May 19, 2021, Corey Kluber of the New York Yankees no-hit the Texas Rangers. This came just a day after Spencer Turnbull and the Tigers no-hit the Seattle Mariners. No hitters are pretty rare, so seeing two in back-to-back days seems unlikely enough, but this was already the <em>sixth</em> no hitter of a young 2021 season. What's more, three separate teams were on the losing end of two no hitters each: Texas, Seattle, and Cleveland. <a href="https://www.insidetheseams.com/mlb-at-large/2021/5/20/rangers-mariners-and-indians-become-first-threesome-to-be-no-hit-twice-in-a-season">This was an MLB first</a>, and the 2021 season ended with a <a href="https://www.nbcsports.com/washington/orioles/mlb-historic-pace-after-kluber-throws-6th-no-hitter-2021">record 9 no hitters in total</a>.
+		</p>
+
+		<p>
+			That got me thinking; how rare should we expect this event to be? More broadly, how likely (or unlikely) is it to see any number of no hitters in a given season, and how many different ways might the winning and losing teams be configured? 
+		</p>
+
+		<p>
+			I put together a quick heuristic analysis that suggests that the likelihood of this --- exactly six no hitters over the first 638 games of a season, with three teams getting no hit twice each --- is about 0.000000206, or 0.0000206%.
+			To put that infinitesimally small number in perspective, we would expect this to occur about <em>once in every five million</em> stretches of 638 games.
+		</p>
+
+		<p>
+			The assumptions and calculations that led to this number are intended to be rather back-of-the-napkin, but nevertheless lead to some interesting mathematics and follow up questions!
+		</p>
+
+		<h3>How many no hitters are expected in a season?</h3>
+
+		<p>
+			To estimate the likelihood of seeing any number of no hitters in a season, we will make the basic assumption that each MLB game has some fixed probability of being a no hitter or not. Let's denote this probability by \(p_{NH}\). To estimate its value, let's use the number of no hitters per game from 1998 - 2019. <a href = "https://en.wikipedia.org/wiki/List_of_Major_League_Baseball_no-hitters">I counted 59 no hitters between during this span</a>, a stretch of approximately 53460 games, giving
+			\[p_{NH} = \frac{59}{53460} \approx 0.0011036 = 0.11036 \%.\]
+			Why this range? I chose it primarily because this is when MLB expanded to its current slate of 30 teams. There were also no strikes or pandemic-shortened seasons during this period, which is convenient. You might prefer to look back further (e.g. to 1969 when the mound was lowered) and get a different value of \(p_{NH}\), but this is good enough for me today.
+		</p>
+
+		<p>
+			Let's start by computing the probability that there are zero no hitters in the season: all 2430 MLB games in a season are played without seeing a single no hitter. Using our assumptions, each game has a \((1-p_{NH})\) chance of <em>not</em> being a no hitter, so we find
+			\[Prob(0 \text{ no hitters}) = (1-p_{NH})^{2430} = 0.0683.\]
+			That's a 6.83% chance, so we might expect a season without a no hitter to occur once every 15 years or so. (Incidentally, in the 24 seasons since 1998, this has happened exactly twice.)
+		</p>
+
+		<p>
+			What about the probability of exactly one no hitter in a season? There is a \(p_{NH}\) chance of one game being a no hitter, and a \((1 - p_{NH})^{2429}\) chance of the remaining games not being no hitters. This can happen in 2430 ways, since our one no hitter could occur in any game of the season, giving us
+			\[Prob(\text{exactly 1 no hitter}) = 2430 p_{NH} (1-p_{NH})^{2429} = 0.183.\]
+		</p>
+
+		<p>
+			More generally, we can calculate the probability of seeing exactly \(N\) no hitters in a season:
+			\[Prob(\text{exactly }N\text{ no hitters}) = \binom{2430}{N} (p_{NH})^N (1-p_{NH})^{2430-N}.\]
+			Without the binomial coefficient factor, this is the probability of having \(N\) no hitters <em>in a row</em> followed by none the rest of the season. The binomial coefficient accounts for how many different ways these \(N\) no hitters could be distributed throughout the season's games. Experts will recognize the <em>binomial distribution</em> here! Another way to phrase our assumption is that no hitters in a season are binomially distributed with probability \(p_{NH}\) and 2430 independent trials. 
+		</p>
+
+		<p>
+			Below is a table showing these probabilities, as well as the probabilities for <em>at most \(N\)</em> no hitters in a season. We also repeat these calculations with 2430 replaced by 638, to obtain the probability of seeing 6 no hitters in the first 638 games, as occurred in the 2021 season.
+		</p>
+
+		<center>	
+<style type="text/css">
+.tg  {border-collapse:collapse;border-spacing:0;}
+.tg td{border-color:black;border-style:solid;border-width:1px;font-family:Arial, sans-serif;font-size:14px;
+  overflow:hidden;padding:10px 5px;word-break:normal;}
+.tg th{border-color:black;border-style:solid;border-width:1px;font-family:Arial, sans-serif;font-size:14px;
+  font-weight:normal;overflow:hidden;padding:10px 5px;word-break:normal;}
+.tg .tg-tn1s{background-color:#f2e9e4;border-color:inherit;font-size:18px;text-align:left;vertical-align:top}
+.tg .tg-n8y0{background-color:#f2e9e4;border-color:#000000;font-size:18px;text-align:left;vertical-align:top}
+.tg .tg-s0ev{background-color:#f2e9e4;border-color:#000000;font-size:18px;font-style:italic;text-align:left;vertical-align:top}
+.tg .tg-rczt{background-color:#f2e9e4;border-color:#000000;font-size:18px;font-weight:bold;text-align:left;vertical-align:top}
+.tg .tg-i3by{background-color:#fffc9e;border-color:#000000;font-size:18px;text-align:left;vertical-align:top}
+.tg .tg-swkm{background-color:#96fffb;border-color:inherit;font-size:18px;text-align:left;vertical-align:top}
+</style>
+<table class="tg">
+<thead>
+  <tr>
+    <th class="tg-rczt" rowspan="2">Number of <br>no hitters, <br>N</th>
+    <th class="tg-rczt" colspan="2">Full Season (G = 2430)</th>
+    <th class="tg-rczt" colspan="2">First 638 games</th>
+  </tr>
+  <tr>
+    <th class="tg-s0ev">Prob(exactly N)</th>
+    <th class="tg-s0ev">Prob(at most N)</th>
+    <th class="tg-s0ev">Prob(exactly N)</th>
+    <th class="tg-s0ev">Prob(at most N)</th>
+  </tr>
+</thead>
+<tbody>
+  <tr>
+    <td class="tg-n8y0">0</td>
+    <td class="tg-n8y0">0.0683</td>
+    <td class="tg-n8y0">0.0683</td>
+    <td class="tg-n8y0">0.494</td>
+    <td class="tg-n8y0">0.494</td>
+  </tr>
+  <tr>
+    <td class="tg-n8y0">1</td>
+    <td class="tg-n8y0">0.183</td>
+    <td class="tg-n8y0">0.252</td>
+    <td class="tg-n8y0">0.348</td>
+    <td class="tg-n8y0">0.843</td>
+  </tr>
+  <tr>
+    <td class="tg-n8y0">2</td>
+    <td class="tg-n8y0">0.246</td>
+    <td class="tg-n8y0">0.498</td>
+    <td class="tg-n8y0">0.123</td>
+    <td class="tg-n8y0">0.965</td>
+  </tr>
+  <tr>
+    <td class="tg-n8y0">3</td>
+    <td class="tg-n8y0">0.220</td>
+    <td class="tg-n8y0">0.718</td>
+    <td class="tg-n8y0">0.0287</td>
+    <td class="tg-n8y0">0.994</td>
+  </tr>
+  <tr>
+    <td class="tg-n8y0">4</td>
+    <td class="tg-n8y0">0.148</td>
+    <td class="tg-n8y0">0.866</td>
+    <td class="tg-n8y0">0.00504</td>
+    <td class="tg-n8y0">0.9992</td>
+  </tr>
+  <tr>
+    <td class="tg-n8y0">5</td>
+    <td class="tg-n8y0">0.0791</td>
+    <td class="tg-n8y0">0.945</td>
+    <td class="tg-n8y0">0.000706</td>
+    <td class="tg-n8y0">0.99991</td>
+  </tr>
+  <tr>
+    <td class="tg-i3by">6</td>
+    <td class="tg-n8y0">0.0353</td>
+    <td class="tg-n8y0">0.980</td>
+    <td class="tg-i3by">0.0000823</td>
+    <td class="tg-i3by">0.999991</td>
+  </tr>
+  <tr>
+    <td class="tg-n8y0">7</td>
+    <td class="tg-n8y0">0.0135</td>
+    <td class="tg-n8y0">0.994</td>
+    <td class="tg-n8y0">8.21e-5</td>
+    <td class="tg-n8y0">0.9999992</td>
+  </tr>
+  <tr>
+    <td class="tg-tn1s">8</td>
+    <td class="tg-tn1s">0.00452</td>
+    <td class="tg-tn1s">0.998</td>
+    <td class="tg-tn1s">7.15e-6</td>
+    <td class="tg-tn1s">0.99999994</td>
+  </tr>
+  <tr>
+    <td class="tg-swkm">9</td>
+    <td class="tg-swkm">0.00134</td>
+    <td class="tg-swkm">0.9995</td>
+    <td class="tg-tn1s">5.53e-7</td>
+    <td class="tg-tn1s">0.999999996</td>
+  </tr>
+</tbody>
+</table>
+</center>
+
+		<p>
+			 This model suggests that we should expect half of seasons to have 2 or fewer no hitters, while half of seasons have 3 or more. So perhaps it shouldn't be surprising that in the 24 seasons since 1998, there have been exactly 12 seasons each of 2 or fewer no hitters and 3 or more no hitters! (Though note that I am including the shortened 2020 season, which I probably shouldn't.) It also predicts between 5 and 6 of those 24 seasons are expected to have exactly 3 no hitters, and indeed there were 6 such seasons. 
+		</p>
+
+		<p> 
+			On the other hand, there have been two seasons with 7 no hitters (2012 and 2015), which seems very unlikely, as well as our unicorn 2021 season, with its 9 total no hitters, 6 of which came in the first 638 games. The probabilities of these two occurrences are quite low, as highlighted above. 
+		</p>
+
+		<h3>Distributing winners or losers</h3>
+
+		<p>
+			Not only were the number of no hitters in the 2021 season unexpected, but so were the distribution of their losers. Never before had three teams been no hit twice each in a season. To model this, let's assume that each MLB team is <em>equally likely</em> to be on the losing end of each no hitter. To be clear, we're sweeping a few things under the rug, but I'll address them later. Here, the key assumption is that the likelihood of each configuration of losing teams is proportional to the number of ways it could occur.
+		</p>
+
+		<p>
+			For example, three teams losing two no hitters each will be the configuration denoted (2,2,2). This can happen in (30 choose 3) =  4060 different ways, since this is the number of three team combinations out of the 30 MLB teams. Other configurations are calculated similarly. For instance, the configuration (2,1,1,1,1) represents 1 team losing two no hitters and four other teams losing one each; this can happen in 30(29 choose 4) = 712530 ways, since there are 30 choices for the team that loses two no hitters, then (29 choose 4) ways to choose the four teams to lose one no hitter from the 29 remaining teams. All of the possible configurations for 6 no hitters, the number of ways they can occur, and their respective probabilities are shown below.
+		</p>
+
+		<center>
+		<style type="text/css">
+.tg  {border-collapse:collapse;border-spacing:0;}
+.tg td{border-color:black;border-style:solid;border-width:1px;font-family:Arial, sans-serif;font-size:14px;
+  overflow:hidden;padding:10px 5px;word-break:normal;}
+.tg th{border-color:black;border-style:solid;border-width:1px;font-family:Arial, sans-serif;font-size:14px;
+  font-weight:normal;overflow:hidden;padding:10px 5px;word-break:normal;}
+.tg .tg-ko7v{background-color:#fffc9e;font-size:18px;text-align:left;vertical-align:top}
+.tg .tg-f2e2{background-color:#f2e9e4;font-size:18px;font-weight:bold;text-align:left;vertical-align:top}
+.tg .tg-7c7f{background-color:#f2e9e4;font-size:18px;text-align:left;vertical-align:top}
+</style>
+<table class="tg">
+<thead>
+  <tr>
+    <th class="tg-f2e2">Configuration</th>
+    <th class="tg-f2e2"># of ways</th>
+    <th class="tg-f2e2">Probability</th>
+  </tr>
+</thead>
+<tbody>
+  <tr>
+    <td class="tg-7c7f">(1,1,1,1,1,1)</td>
+    <td class="tg-7c7f">593775</td>
+    <td class="tg-7c7f">0.366</td>
+  </tr>
+  <tr>
+    <td class="tg-7c7f">(2,1,1,1,1)</td>
+    <td class="tg-7c7f">712530</td>
+    <td class="tg-7c7f">0.439</td>
+  </tr>
+  <tr>
+    <td class="tg-7c7f">(2,2,1,1)</td>
+    <td class="tg-7c7f">164430</td>
+    <td class="tg-7c7f">0.101</td>
+  </tr>
+  <tr>
+    <td class="tg-ko7v">(2,2,2)</td>
+    <td class="tg-ko7v">4060</td>
+    <td class="tg-ko7v">0.00250</td>
+  </tr>
+  <tr>
+    <td class="tg-7c7f">(3,2,1)</td>
+    <td class="tg-7c7f">24360</td>
+    <td class="tg-7c7f">0.0150</td>
+  </tr>
+  <tr>
+    <td class="tg-7c7f">(3,1,1,1)</td>
+    <td class="tg-7c7f">109620</td>
+    <td class="tg-7c7f">0.0675</td>
+  </tr>
+  <tr>
+    <td class="tg-7c7f">(3,3)</td>
+    <td class="tg-7c7f">435</td>
+    <td class="tg-7c7f">0.000268</td>
+  </tr>
+  <tr>
+    <td class="tg-7c7f">(4,2)</td>
+    <td class="tg-7c7f">870</td>
+    <td class="tg-7c7f">0.000536</td>
+  </tr>
+  <tr>
+    <td class="tg-7c7f">(4,1,1)</td>
+    <td class="tg-7c7f">12180</td>
+    <td class="tg-7c7f">0.00750</td>
+  </tr>
+  <tr>
+    <td class="tg-7c7f">(5,1)</td>
+    <td class="tg-7c7f">870</td>
+    <td class="tg-7c7f">0.000536</td>
+  </tr>
+  <tr>
+    <td class="tg-7c7f">(6)</td>
+    <td class="tg-7c7f">30</td>
+    <td class="tg-7c7f">0.0000185</td>
+  </tr>
+  <tr>
+    <td class="tg-f2e2">Total</td>
+    <td class="tg-f2e2">1623160</td>
+    <td class="tg-f2e2">1</td>
+  </tr>
+</tbody>
+</table>
+		</center>
+
+		<p>
+			According to this heuristic, there was only a 0.25% chance that three teams lost two no hitters each! Perhaps even more surprisingly, in a season (or stretch of games) in which six no hitters occur, the most likely configuration of losers is (2,1,1,1,1) at 43.9%. The chance of having six different losers, i.e. configuration (1,1,1,1,1,1), is only 36.58%, meaning one might <em>expect</em> at least one repeat loser in six no hitters.
+		</p> 
+
+		<p>
+			We can repeat these calculations with other numbers of total no hitters. For instance, if there were \(N = 9\) no hitters as in 2021, we expect the configurations
+			<ul>
+				<!--<li>\(N=3\): (1,1,1) has probability 81.9%,</li>
+				<li>\(N=3\): (2,1) has probability 17.59%,</li>
+				<li>\(N=3\): (3) has probability 0.605%,</li> -->
+				<li>(1,1,1,1,1,1,1,1,1) with probability 8.78%,</li>
+				<li>(3,2,2,1,1) with probability 2.62%.</li>
+			</ul>
+			9 different teams won the 9 no hitters in 2021, so (1,1,1,1,1,1,1,1,1) is the configuration of the winning teams, while (3,2,2,1,1) is the configuration of losing teams. Both of these are rather unlikely; (2,1,1,1,1,1,1,1) and (2,2,1,1,1,1,1) would expected to occur 28.7% and 26.2% of the time, respectively.
+		</p>
+
+		<p>
+			For a choice of \(N\) with more available data, consider \(N=3\). Here we expect the configurations
+			<ul>
+				<li>(1,1,1) with probability 81.9%,</li>
+				<li>(2,1) with probability 17.59%,</li>
+				<li>(3) with probability 0.605%.</li>
+			</ul>
+			In the 24 seasons since 1998, there have been 6 with exactly three no hitters (1999, 2001, 2007, 2011, 2013, and 2018). Our model suggests that we should expect (1,1,1) to occur much more often than (2,1), and we're unlikely to see (3) appear at all. Indeed, if we look at the configurations of losing teams in those years, we find that (1,1,1) occured 5 times and (2,1) once! (The Padres were no hit twice in 2001.)  In all six of these years, there were three distinct winning teams. This is a small sample size, but it's nevertheless encouraging to see once again that our heuristics seem to reflect reality.
+		</p>
+
+		<h4>Aside: stars, bars, and partitions</h4>
+
+		<p>
+			Experts might recognize more general phenomena appearing once again here!
+			Given \(N\) no hitters, the problem of finding the total number of ways to pick losing (or symmetrically, winning) teams is the same as selecting \(N\) items from \(M=30\) distinct bins. Note that we allow selection of multiple (and possibly all \(N\)) items from each bin; this represents one team being no hit more than once. (This problem also goes by other names, such as choosing \(N\) donuts from \(M\) flavors, etc.) 
+		</p>
+
+		<p>
+			It turns out the answer is 
+			\[\binom{N+M-1}{N} = \frac{(N+M-1)!}{(M-1)!N!},\]
+			where here \(M\) denotes the number of bins. The proof I know is a construction called <em>stars and bars</em>. Our \(N\) items are represented by stars,
+			\[*** \cdots ***\]
+			and choosing the \(M\) bins they came from is represented by placing \(M-1\) bars between them, e.g. something like
+			\[||**|* \cdots |**|*.\]
+			Thus we have lined up \(N+M-1\) total objects, and we want to know how many different ways we can choose \(N\) of them to be stars, which is precisely \(N+M-1\) choose \(N\).
+		</p>
+
+		<p>
+			We also see <em>partitions</em> popping up! A partition of \(N\) is a collection of positive integers which sum to \(N\). Thus we see that our "configurations" of losing teams are actually partitions of \(N\). There are 11 partitions of 6, hence the 11 entries in the table above. There are 30 partitions of 9, explaining why I only listed the two that actually occurred in 2021 above.
+		</p>
+
+		<h3>A one in 5 million season?</h3>
+
+		<p>
+			So where did that 0.0000206% come from? If we take the probability of 6 no hitters occuring in the first 638 games to be 0.0000823, and the probability that three separate teams were on the losing end of two no hitters each is 0.00250, then multiplying them together gives the probability of both occuring to be 0.000000206. Thus we might expect this to happen about once in every \(\frac{1}{0.000000206} \approx 4860000 \) seasons, or almost 5 million.
+		</p>
+
+		<p>
+			Looking at the full 2021 season, the probability of exactly 9 no hitters occuring with the losing teams configuration (3,2,2,1,1) is
+			\[(0.00182)(0.0262) = 0.0000476,\]
+			or 0.00476%. This we might expect to happen once in every 20000 years or so, if we are to believe this analysis. 
+		</p>
+
+		<h4>Are all outcomes this rare?</h4>
+
+		<p>
+			My first question --- and the first one a friend asked me when I mentioned this calculation --- was: <em>is every outcome expected to be rare?</em> Are we asking for too much by requesting a fixed number of no hitters to occur <em>and</em> for those no hitters to have some given configuration of losing (or winning) teams? If every possibility is unlikely, but one has to happen, then we shouldn't be surprised when seemingly rare events occur!
+		</p>
+
+		<p>
+			I can say with some confidence that this is not the case, at least for small values of \(N\). For example, consider a season with \(N=3\) no hitters, with three distinct losing teams, i.e. a configuration of (1,1,1). Using our heuristic calculations above, we expect this to occur with probability
+			\[(0.220)(0.819) = 0.180,\]
+			which is a bit more than 1/6. In the 24 seasons since 1998, this has actually occurred 5 times, so once more than our expectation!
+		</p>
+
+		<p>
+			Other scenarios with small \(N\) are relatively likely <em>and</em> have occurred in the last 24 years: \(N=2\) with losing configuration (1,1) is expected to occur 23% of the time, and has actually happened 4 times, while \(N=1\) is expected to occur 18% of the time and has happened 6 times.
+		</p>
+
+		<p>
+			As \(N\) grows however, the probability of having \(N\) no hitters decreases rapidly while the number of possible configurations (partitions of \(N\)) increases, lowering the probability of even the more likely configurations occuring. Thus at the larger values of \(N\) like 6 or 9, it is somewhat true that each possibility becomes unlikely.
+		</p>
+
+		<h4>Limitations and future questions</h4>
+
+		<p>
+			This whole approach hinges on our heuristic assumptions, namely that each MLB game has a fixed probability of being a no hitter and that for any given no hitter, each team is equally likely to be on the winning or losing end. Both of these are flawed!
+		</p>
+
+		<p>
+			Let's first consider the effect of the teams playing. Looking at the <a href = "https://www.baseball-reference.com/leagues/majors/2021.shtml">2021 MLB season summary</a>, we see that the Seattle Mariners had the fewest hits in the league, while the LA Dodgers pitching allowed the fewest hits. This leads me to believe that a Dodgers-Mariners matchup might be more likely to end up in the a no hitter than any other! I also  expect a team like the Astros, who led the league in hits, would be harder to no hit, or a team like the Orioles, who gave up the most hits, to be less likely to throw a no hitter. Still, our assumptions made these calculations fairly easy and gave results that seem at least somewhat reasonable. Trying to tease out each team's likelihood of being on either end of a no hitter separately sounds like a massive headache. 
+		</p>
+
+		<p>
+			Even if we could analyze each team separately, I might expect player level effects as well, namely from the starting pitcher. The best pitchers are usually good at preventing hits, which should translate to more no hitters, right? Perhaps equally interesting are catchers, since they appear in many more games than pitchers. Are there catcher metrics that correlate well with the number of no hitters caught over their career?
+		</p>
+
+		<p>
+			Even if we believe our assumptions are valid, we're entirely ignoring how the value of \(p_{NH}\) might be changing from year to year! I've written in the past about <a href="./blog_stealing_bases">the effect of different run environments</a> on the game, and something similar could be going on here too. For instance, hitters have shifted their focus from making contact to hitting home runs, resulting in a drop in league batting average from .266 in 1998 to .244 in 2021. It might be fun to study correlations between no hitter rates and batting average, or other metrics. A strong correlation might suggest that a season with 9 no hitters is more likely than I calculated here!
+		</p>
+
+		<!--
+
+		<h4>Future questions</h4>
+
+		just one team losing 3 no hitters?
+
+		************************************************************
+
+		<h3>Sketching the heuristic</h3>
+
+		<p>
+			At the core of this idea is to split the MLB season into a linear sequence of games, denoted by \(G\). We will then assume that each MLB game has some probability \(p_{NH}\) of being a no hitter. This will allow us to model the probability of \(N\) no hitters occuring in a given season, or indeed any stretch of \(G\) games, once we have an estimate for \(p_{NH}\). After that, we'll count how many ways we could distribute the <em>losing teams</em> among those \(N\) no hitters. Combining these two probabilities, we estimate the liklihood that \(N\) no hitters occur in \(G\) games with a given configuration of losing (or winning) teams.
+		</p> 
+
+		
+
+		<h4>The parameters</h4>
+
+		<p>
+			First we'll need a value for \(G\). A contemporary MLB season consists of 2430 games: there are 30 teams, each team plays 162 games, and each game involves exactly two participating teams, for a total of 2430. 
+		</p>
+
+		<p>
+			Thinking back to the motivating situation of the 2021 season, one of the surprises was that these six no hitters had all occured by May 19, not even two months into the season! Looking back to the <a href="https://www.baseball-reference.com/boxes/?date=2021-05-19">MLB standings on 5/19/21</a>, we find that 638 games had been played by this point.
+		</p>
+
+		<p>
+			Next we need to choose a value for \(p_{NH}\), the probability for a given MLB game to be a no hitter. This is a bit trickier, as there are many different ways of going about it. The simplest way I can think of is to take some stretch of games and just divide the number of no hitters by the number of games,
+			\[p_{NH} \approx \frac{N}{G}.\]
+		</p>
+
+		<p>
+			As for which stretch of games to choose, I went with 1998 - 2019, primarily because this is when MLB expanded to its current slate of 30 teams. There were also no strikes or pandemic-shortened seasons during this period, which is convenient. During these 22 seasons, there were 59 no hitters and a total of 53460 games, giving
+			\[p_{NH} = \frac{59}{53460} \approx 0.0011036 = 0.11036 \%.\]
+		</p>
+
+		<p>
+			As an aside, this comes out to about 2.68 no hitters per season during this period. I also looked from 1961 - 2019 instead, as this is when MLB expanded the season to 162 games (but had fewer teams), and interestingly there were more no hitters per season during this period, even though there were fewer games played. This suggests the true no hitter rate may be higher. However, I wrote most of this at a conference and on an airplane so wanted to keep my calculations back-of-the-napkin; if this frustrates you, go ahead and use these heuristics with whatever you believe is the true value of \(p_{NH}\)! *** fix this****
+		</p>
+
+		<h4>The assumptions</h4>
+
+		<p>
+			What counts as a no hitter: A no hitter is when one team gets no hits in a game. Reaching base on walks and errors do not count as hits, so this doesn't necessarily mean a team has no baserunners or cannot score runs. I used  <a href = "https://en.wikipedia.org/wiki/List_of_Major_League_Baseball_no-hitters">the Wikipedia entry for MLB no hitters</a> as the source for numbers of no hitters in various years. The ``official" list does not include no hitters in shortened games, or ones that were broken up after the ninth inning. It does include combined no hitters (multiple pitchers appeared in the game) and playoff games.
+		</p>
+
+		<p>
+			Season length: the scheduled MLB seasons from 1998 - 2019 were 162 games for each team. However, sometimes games are postponed due to weather and later canceled, because they would have no effect on the final standings. There is also the possibility of a 163rd game, to break a tie for first place in a division. I'm going to ignore this altogether and assume each MLB season consists of 2430 games. 
+		</p>
+
+		<h4>What I'm ignoring</h4>
+
+		<p>
+			Equal probability: I'm going to assume every game has the equal probability of \(p_{NP}\) of being a no hitter. This is flawed, since we might expect certain games to be more or less likely to result in a no hitter: for instance if a dominant pitcher is on the mound against a weak offensive team, there's probably a greater chance of a no hitter occurring. However, since we're interested in aggregating a stretch of games (like an entire season), and not in a single game outcome, I think this is pretty fair.
+		</p>
+
+		<p>
+			Independence: let's also go ahead and assume that the probability of a no hitter doesn't depend on the outcome of any other game. This seems pretty reasonable to me, as I have no idea why a no hitter (or lack thereof) one game would affect the next. But, just to be clear, we'll be assuming game outcomes (no hitter or not) are independent of each other.
+		</p>
+
+		<p>
+			Distributing wins/losses: once we know \(N\) no hitters occur in some \(G\) games, we will assign likelihoods that the winners (or losers) in these games occurred in some configuration proportional to the number of different ways they could have occurred. Essentially, what we're doing is saying that in any given no hitter, there is an equal probability of any one of the 30 teams being the winning/losing team. Again, this ignores that better teams are more likely to win, while losing teams are more likely to lose, etc. ***make this better***
+		</p>
+
+		<p>
+			You don't have to win a no hitter: There have been instances of a team throwing a no hitter and losing the game **when??**. For this purpose, we will assume the losing team is the one that recorded no hits.
+		</p>
+
+		<h3>The calculations</h3>
+
+		Let's start by calculating the probability that there were zero no hitters in a season, i.e. \(\mathrm{Prob}(N = 0)\). This is the same as the probability that <em>all 2430 games were not no hitters,</em>
+		\[\mathrm{Prob}(N=0) = \left(1 - p_{NH}\right)^{2430}.\]
+
+		<h3>Testing table</h3>
+
+<center>	
+<style type="text/css">
+.tg  {border-collapse:collapse;border-spacing:0;}
+.tg td{border-color:black;border-style:solid;border-width:1px;font-family:Arial, sans-serif;font-size:14px;
+  overflow:hidden;padding:10px 5px;word-break:normal;}
+.tg th{border-color:black;border-style:solid;border-width:1px;font-family:Arial, sans-serif;font-size:14px;
+  font-weight:normal;overflow:hidden;padding:10px 5px;word-break:normal;}
+.tg .tg-tn1s{background-color:#f2e9e4;border-color:inherit;font-size:18px;text-align:left;vertical-align:top}
+.tg .tg-n8y0{background-color:#f2e9e4;border-color:#000000;font-size:18px;text-align:left;vertical-align:top}
+.tg .tg-s0ev{background-color:#f2e9e4;border-color:#000000;font-size:18px;font-style:italic;text-align:left;vertical-align:top}
+.tg .tg-rczt{background-color:#f2e9e4;border-color:#000000;font-size:18px;font-weight:bold;text-align:left;vertical-align:top}
+.tg .tg-i3by{background-color:#fffc9e;border-color:#000000;font-size:18px;text-align:left;vertical-align:top}
+.tg .tg-swkm{background-color:#96fffb;border-color:inherit;font-size:18px;text-align:left;vertical-align:top}
+</style>
+<table class="tg">
+<thead>
+  <tr>
+    <th class="tg-rczt" rowspan="2">Number of <br>no hitters, <br>N</th>
+    <th class="tg-rczt" colspan="2">Full Season (G = 2430)</th>
+    <th class="tg-rczt" colspan="2">First 638 games</th>
+  </tr>
+  <tr>
+    <th class="tg-s0ev">Prob(exactly N)</th>
+    <th class="tg-s0ev">Prob(at most N)</th>
+    <th class="tg-s0ev">Prob(exactly N)</th>
+    <th class="tg-s0ev">Prob(at most N)</th>
+  </tr>
+</thead>
+<tbody>
+  <tr>
+    <td class="tg-n8y0">0</td>
+    <td class="tg-n8y0">0.0683</td>
+    <td class="tg-n8y0">0.0683</td>
+    <td class="tg-n8y0">0.494</td>
+    <td class="tg-n8y0">0.494</td>
+  </tr>
+  <tr>
+    <td class="tg-n8y0">1</td>
+    <td class="tg-n8y0">0.183</td>
+    <td class="tg-n8y0">0.252</td>
+    <td class="tg-n8y0">0.348</td>
+    <td class="tg-n8y0">0.843</td>
+  </tr>
+  <tr>
+    <td class="tg-n8y0">2</td>
+    <td class="tg-n8y0">0.246</td>
+    <td class="tg-n8y0">0.498</td>
+    <td class="tg-n8y0">0.123</td>
+    <td class="tg-n8y0">0.965</td>
+  </tr>
+  <tr>
+    <td class="tg-n8y0">3</td>
+    <td class="tg-n8y0">0.220</td>
+    <td class="tg-n8y0">0.718</td>
+    <td class="tg-n8y0">0.0287</td>
+    <td class="tg-n8y0">0.994</td>
+  </tr>
+  <tr>
+    <td class="tg-n8y0">4</td>
+    <td class="tg-n8y0">0.148</td>
+    <td class="tg-n8y0">0.866</td>
+    <td class="tg-n8y0">0.00504</td>
+    <td class="tg-n8y0">0.9992</td>
+  </tr>
+  <tr>
+    <td class="tg-n8y0">5</td>
+    <td class="tg-n8y0">0.0791</td>
+    <td class="tg-n8y0">0.945</td>
+    <td class="tg-n8y0">0.000706</td>
+    <td class="tg-n8y0">0.99991</td>
+  </tr>
+  <tr>
+    <td class="tg-i3by">6</td>
+    <td class="tg-n8y0">0.0353</td>
+    <td class="tg-n8y0">0.980</td>
+    <td class="tg-i3by">0.0000823</td>
+    <td class="tg-i3by">0.999991</td>
+  </tr>
+  <tr>
+    <td class="tg-n8y0">7</td>
+    <td class="tg-n8y0">0.0135</td>
+    <td class="tg-n8y0">0.994</td>
+    <td class="tg-n8y0">8.21e-5</td>
+    <td class="tg-n8y0">0.9999992</td>
+  </tr>
+  <tr>
+    <td class="tg-tn1s">8</td>
+    <td class="tg-tn1s">0.00452</td>
+    <td class="tg-tn1s">0.998</td>
+    <td class="tg-tn1s">7.15e-6</td>
+    <td class="tg-tn1s">0.99999994</td>
+  </tr>
+  <tr>
+    <td class="tg-swkm">9</td>
+    <td class="tg-swkm">0.00134</td>
+    <td class="tg-swkm">0.9995</td>
+    <td class="tg-tn1s">5.53e-7</td>
+    <td class="tg-tn1s">0.999999996</td>
+  </tr>
+</tbody>
+</table>
+</center>
+
+		
+
+		<h3>Are all outcomes this unlikely?</h3>
+
+		<h2>Outline</h2>
+
+			<p>
+				<ul>
+						<li><a href = "https://en.wikipedia.org/wiki/List_of_Major_League_Baseball_no-hitters">Wiki no hitters</a></li>
+						<li><a href="https://www.baseball-reference.com/boxes/?date=2021-05-19">MLB standings on 5/19/21</a></li>
+						<li><a href="https://math.stackexchange.com/questions/139395/number-of-ways-of-choosing-m-objects-with-replacement-from-n-objects">STars and Bars MO post</a></li>
+						<li>June 29, 1990: two NH on same day</li>	
+						<li><a href="https://www.insidetheseams.com/mlb-at-large/2021/5/20/rangers-mariners-and-indians-become-first-threesome-to-be-no-hit-twice-in-a-season">First trio of no hit teams</a></li>
+						<li><a href="https://www.si.com/.amp/mlb/2021/05/21/no-hitter-surge-like-1917-season-the-opener">SI article on 1917 no hitter clusters</a></li>
+						<li><a href="https://www.nbcsports.com/washington/orioles/mlb-historic-pace-after-kluber-throws-6th-no-hitter-2021">NBC article on 2021 no hitter record</a></li>
+						<li><a href="https://www.mlb.com/news/pitchers-to-throw-no-hitter-and-lose#:~:text=With%20that%2C%20the%20Yankees%20lost,%2D%2D%20or%20an%20earned%20run.&text=This%20is%20one%20of%20only,was%20a%20%22team%22%20effort.">Teams that lost no hitters</a></li>
+				</ul>
+			</p>-->
+
+</div>
+</body>
+
+</html>

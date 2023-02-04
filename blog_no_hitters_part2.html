@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+
+<html>
+
+<head>
+	<title>Christopher Keyes - Blog</title>
+	<link rel="stylesheet" type="text/css" href="style.css" />
+	<script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+	<script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+</head>
+
+<body>
+	<header>
+		Christopher Keyes
+	</header>
+
+	<script src="nav.js"></script>
+
+	<div id="rounded">
+
+		<h2>Talking Baseball: Heuristics for Unlikely No Hitters Part II</h2>
+
+			<p><em>(Originally published on ***)</em></p>
+
+      <p><em>This is part of a series of posts on sabermetrics and the mathematics of baseball. You can find more <a href = "./blog_talking_baseball.html">here</a>.</em></p>
+
+      <p>
+        In a <a href = "./blog_no_hitters.html">previous post</a> I wrote about the (un)likelihood of MLB no hitters, which led me to this question: are no hitters more likely when batting average is low? We can test this with historical data by counting up the no hitters that occurred in each season and using <a href = "https://www.baseball-reference.com/leagues/majors/bat.shtml">Baseball Reference</a> for year-by-year league-wide batting average data. More precisely, we will calculate the number of no hitters <em>per game</em> in each season --- abbreviated \(NH/G\) --- to account for the fact that more or fewer games were played in certain years due to pandemics, strikes, or shorter seasons.
+      </p>      
+
+      <p>
+        Here's the scatter plot of \(NH/G\) vs. batting average, from 1900 - 2021.
+      </p>
+
+      <center><figure><img src="./Picture1.png" alt="Don't write like Calvin" width="528"></figure></center>
+
+      <p>
+      	From the shape of the plot, there certainly appears to be a negative correlation. This is supported by the regression equation, with its negative slope of -0.0219. That is, for every 10 points (i.e. 0.010) increase in batting average, we expect to see about 0.000219 <em>fewer</em> no hitters per game. Thats...not much, but over a full MLB season (2430 games), this comes out to 0.532 no hitters --- about half of one! In somewhat cleaner terms, this suggests that if batting average <em>drops</em> by 20 points across MLB, we expect to see one more no hitter in the season.
+      </p>
+
+      <p>
+      	This isn't the whole story of course. There's a lot of variability in \(NH/G\) over the years, namely the values of 0 in those years without no hitters, which seem to occur for years of high and low batting average. This is reflected in the somewhat low \(R^2\) value around 0.23: much of the variability is not explained by batting average alone (for more on \(R^2\) I really like <a href = "http://blog.philbirnbaum.com/2014/08/more-r-squared-analogies.html">Phil Birnbaum's blog post</a>, as well as the his sabermetric research blog in general). I should also point out that linear regression isn't really appropriate here, since the linear model predicts <em>negative</em> \(NH/G\) at high batting average values; this is nonsense, since \(NH/G\) is always nonnegative.
+      </p>
+
+      <p>
+      	In this post I'll break down why one might expect batting average to correlate with no hitters better than the other standard metrics, as well as a different heuristic approach for using batting average to predict no hit rates (quite poorly as it turns out).
+      </p>
+
+      <h3>Why batting average?</h3>
+
+      <p>
+      	Batting average is defined to be the ratio of <em>hits</em> to <em>at bats</em>:
+      	<ul>
+      		<li>A <em>hit</em> \((H)\) is when the batter puts the ball in play and reaches base safely. Each hit is a single, double, triple, or home run, depending on which base the batter reaches on the play. (Note that this does not include when the defensive team makes a mistake that allows the runner to reach base; such plays are scored as <em>errors</em>.)
+      		<li>An <em>at bat</em> \((AB)\) is any time a batter comes to the plate and gets a hit, reaches on an error, records an out other than a <em>sacrifice</em>, or hits into a fielder's choice (when the batter reaches base, but another runner is tagged or forced out).
+      	</ul> 
+      	Walks, hit by pitches, and sacrifice bunts or flies are not counted as at bats.
+      </p>
+
+      <p>
+      	Since in a no hitter all that matters is that the batting team records no hits, and batting average measures the rate at which at bats end in hits, it seems that it should be related to the rate of no hitters per game. If we were instead interested in <em>perfect games</em>, in which the defensive team not only gives up no hits, but no walks, errors, or baserunners at all, it might make sense to study <em>on base percentage</em>.
+      </p>
+
+      <p>
+      	Still, even though I claim it makes sense, we should probably check, right?
+      </p>
+
+      <h3>Another heuristic</h3>
+
+</div>
+</body>
+
+</html>

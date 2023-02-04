@@ -1,0 +1,281 @@
+<!DOCTYPE html>
+
+<html>
+
+<head>
+	<title>Christopher Keyes - Math Circle</title>
+	<link rel="stylesheet" type="text/css" href="style.css" />
+	<script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+	<script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+	<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+	<script>
+		function ShowAndHide(SectionName) {
+	    	var x = document.getElementById(SectionName);
+	   		if (x.style.display == 'none') {
+	        	x.style.display = 'block';
+	    	} else {
+	        	x.style.display = 'none';
+	    	}
+		}
+	</script>
+	<link rel="stylesheet" type="text/css" href="https://tikzjax.com/v1/fonts.css">
+	<script src="https://tikzjax.com/v1/tikzjax.js"></script>
+</head>
+
+<body>
+	<header>
+		Christopher Keyes
+	</header>
+
+	<script src="nav.js"></script>
+
+	<div id="rounded">
+
+		<h2>The Kakeya Problem</h2>
+
+		<p>
+			<em>Originally developed as a lesson for high school students at <a href="http://www.mathcs.emory.edu/mathcircle/">Emory Math Circle</a> and taught in September 2022.</em>
+		</p>
+
+		<figure><center>
+			<img src="./photos/Kakeya_needle.gif" alt = "Animation of Kakeya's Kakeya set">
+		</center></figure>
+
+		<h3>Overview</h3>
+
+			<p>
+				In this lesson, we will introduce students to the <em>Kakeya conjecture</em> through exploration. For the warmup, students will think about the classical Kakeya problem: finding the smallest possible region in the plane through which we can sweep a unit length needle 180 degrees. Then we will think about a generalization of this problem to n by n grids. Students will have to figure out what a “line” is in this context, what possible slopes they can have, and then reason about <em>Kakeya sets</em> --- sets of points which contain a line of each possible slope --- in this new context.
+			</p>
+
+		<h4>Objectives and transferable skills</h4>
+
+		<ul>
+			<li>Kakeya sets: students will find Kakeya sets in the real plane and over finite fields.</li>
+			<li>Geometric reasoning: students will develop an intuition for lines and slopes in the context of an n by n grid.</li>
+			<li>Observation and conjecture: students will practice making observations, formulating conjectures, and testing them by studying further examples.</li>
+		</ul>
+
+		<h4>Resources and supplies</h4>
+
+		<ul>
+			<li><a href="./files/mc_kakeya_warmup.pdf">Warmup worksheet</a> (easily done on the board without printing out)</li>
+			<li><a href="./files/mc_kakeya_worksheet.pdf">Activity worksheet</a></li>
+			<li>Whiteboards for students to easily draw and erase (or extra scrap paper).</li>
+		</ul>
+
+		<h3> Warmup </h3>
+
+		<p>
+			Let's say we have a needle of length 1 sitting in the plane. Our goal is to rotate the needle a full 180 degrees, using any continuous motion in the plane --- like translation or rotation from any fixed point. 
+		</p>
+
+		<p>
+			This is too easy if we're allowed to use the whole plane! Let's constrain ourselves by requiring that we start with the needle inside some region, and all our rotation and translation has to stay within that region. 
+		</p>
+
+		<p><strong>Goal</strong>: <em>minimize</em> the area of this region.</p>
+
+		<p>
+			This is still pretty easy if we take our region to be a "big" rectangle (where big is relative to the length of the needle), as shown on the <a href="./files/mc_kakeya_warmup.pdf">warmup worksheet</a>. As a warmup, try to make the region as small as possible, in terms of its area! As you do, think about the following questions:
+			<ul>
+				<li>What properties does your smallest (so far at least!) region have? Is it convex or concave?</li>
+				<li>How much "wiggle room" do you seem to have on your needle's path? If you have some, can you use that to eliminate some area?</li>
+				<li>Lines have <em>slopes</em>. Which slopes does our needle (i.e. line segment) take on as we continuously rotate it around in the plane?</li>
+			</ul>
+		</p>
+
+		<p>
+			If we can turn our needle all the way around, we hit every possible slope! Kakeya was originally interested in region in the (real Euclidean) plane with the property that they contained a unit length line segment of every slope (including vertical). Kakeya also thought he found the smallest area such region, drawn at the top of this post --- but there turn out to be smaller ones! This is the topic for another time, but look up <em>Besicovitch needle sets</em> if you are interested in learning more. Instead, we're going to turn to a different version of the problem.
+		</p>
+
+		<h3> Kakeya sets on grids </h3>
+
+		<p>
+			Consider an n x n grid, like the 3 x 3 and 5 x 5 ones on the <a href="./files/mc_kakeya_worksheet.pdf">worksheet</a>. What is a line in this setting? What slopes can a line have? It might help to think about what characteristics lines usually have, and how we can carry those over to our setting.
+		</p>
+
+		<p>
+			I think it's easiest to characterize a line by <em>a point and a direction</em>. Or, we can think of a line as <em>joining two points</em>, which implicitly defines a notion of direction/slope. Thinking along these lines (ha!), we can join any two points in our grid by a line! Some of these are sort of obvious, like the vertical and horizontal ones below.
+		</p>
+
+		<center><script type="text/tikz">
+  \begin{tikzpicture}[scale = 2]
+    \filldraw (0,0) circle (2pt);
+    \filldraw (1,0) circle (2pt);
+    \filldraw (2,0) circle (2pt);
+    \filldraw (0,1) circle (2pt);
+    \filldraw (1,1) circle (2pt);
+    \filldraw (2,1) circle (2pt);
+    \filldraw (0,2) circle (2pt);
+    \filldraw (1,2) circle (2pt);
+    \filldraw (2,2) circle (2pt);
+
+    \draw[blue, thick] (0,0) -- (0,2);
+    \draw[red, thick] (0,1) -- (2,1);
+  \end{tikzpicture}
+</script></center>
+
+		<p>
+			Others are more subtle! What if we join the points (0,0) and (2,1), which has a slope of 1/2. Unlike the lines above, it only passes two points on our grid. But if we <em>extend</em> the grid, we see it also passes through (4,2); shifting this point to the left by 3, back onto our original square, we get the point (1,2), giving us the green "line" below.
+		</p>
+
+	<center><script type="text/tikz">
+		\begin{tikzpicture}[scale = 2]
+    \filldraw (0,0) circle (2pt);
+    \filldraw (1,0) circle (2pt);
+    \filldraw (2,0) circle (2pt);
+    \filldraw (0,1) circle (2pt);
+    \filldraw (1,1) circle (2pt);
+    \filldraw (2,1) circle (2pt);
+    \filldraw (0,2) circle (2pt);
+    \filldraw[green] (1,2) circle (2pt);
+    \filldraw (2,2) circle (2pt);
+
+    \draw[green, thick] (0,0) -- (2,1);
+  \end{tikzpicture}
+</script></center>
+
+		<p>
+			It's more straightforward to think of the line just as the collection of grid points, in this case \(\{(0,0), (2,1), (1,2)\}\). What's really going on is that we are looking at lines in the plane of <em>integers modulo 3</em>. This is why it makes some amount of sense to identify (4,2) with (1,2), and why our lines don't always look like the ones we are used to.
+		</p>
+
+		<p>
+			A <strong>Kakeya set</strong> is a subset of the plane that contains all possible slopes. In the n x n grid setting, it is a subset of points that contains at least one line of every slope. As in the warmup, our challenge is to find the <em>smallest</em> Kakeya set --- this time we measure size by number of points, rather than area.
+		</p>
+
+		<h3> Questions </h3>
+
+		<p>(See also the <a href="./files/mc_kakeya_worksheet.pdf">worksheet</a>.)</p>
+
+		<ol>
+			<li>Convince yourself that the notion of "lines" above makes sense! Draw some examples.</li>
+
+			<li>Do you notice anything fishy? More precisely, can you find any examples of lines that turn out to be the same? (<em>Hint:</em> try finding another line that contains the same three points as the green line above, but without starting with (0,0) and (2,1).)</li>
+
+			<li>How many possible <em>slopes</em> of lines on the 3 x 3 grid are there?</li>
+
+			<li>What is the smallest Kakeya set you can find on the 3 x 3 grid? Can you prove that your answer is the best possible? </li>
+		</ol>
+
+		<h4> Challenge questions </h4>
+
+		<ol>
+			<li>Repeat all the questions above, but with a 5 x 5 grid.</li>
+			<li>Repeat all the questions above, but with a 4 x 4 grid. What is different here?</li>
+			<li>Using all of your observations so far, what can you say about this problem on an n x n grid?</li>
+			<li>How could we generalize this problem to n x n x n cubes?</li>
+
+		</ol>
+
+		<h3> Discussion </h3>
+
+		<p><strong>Spoiler alert!</strong> Below I'll share some answers and insight about the questions above. Try them on your own first, before reading ahead, and proceed only if you're stuck or ready to check your answers and reasoning.</p>
+
+		<BUTTON ONCLICK="ShowAndHide('Question1')">Show/hide question 1</BUTTON>
+
+		<div ID="Question1" STYLE="display:none">
+		
+		<p> 
+			This explanation may help you with Question 1. A line in the real Euclidean plane is given by an equation \(ax + by + c = 0\). Taking a=1, b=1, c=0, we get the line \(x + y = 0\), more often written as \(y = -x\).
+		</p>
+
+		<p>
+			If we think of our lines as "lines in the plane of integers modulo 3," then \(x + y \equiv 0 \pmod{3} \) still makes sense	and looks like a line! In fact, it consists of the points \(\{(0,0), (1,2), (2,1)\}\), just like the green line depicted above. This suggests that the line of slope 1/2 passing through the origin is equal to the line of slope -1 passing through the origin. 
+		</p>
+
+		</div>
+
+		<BUTTON ONCLICK="ShowAndHide('Question2')">Show/hide question 2</BUTTON>
+
+		<div ID="Question2" STYLE="display:none">
+		
+		<p> 
+			Something fishy happened in the explanation for Question 1: the lines through the origin of slope -1 and 1/2 agreed. Here's another example. Consider the horizontal line shown below in red. Starting at (0,1) and using a slope of 3, we get the points (1,4) and (2,7), which are identified with (1,1) and (2,1). This gives us the same line, illustrated below in blue!
+		</p>
+
+		<center><script type="text/tikz">
+  \begin{tikzpicture}[scale = 2]
+    \filldraw (0,0) circle (2pt);
+    \filldraw (1,0) circle (2pt);
+    \filldraw (2,0) circle (2pt);
+    \filldraw (0,1) circle (2pt);
+    \filldraw (1,1) circle (2pt);
+    \filldraw (2,1) circle (2pt);
+    \filldraw (0,2) circle (2pt);
+    \filldraw (1,2) circle (2pt);
+    \filldraw (2,2) circle (2pt);
+
+    \draw[red, thick] (0,1) -- (2,1);
+    \draw[blue, thick] (0,1) -- (0.5,2.5);
+    \draw[blue, thick] (0.5, -0.5) -- (1.5, 2.5);
+    \draw[blue, thick] (2,1) -- (1.5, -0.5);
+  \end{tikzpicture}
+</script></center>
+
+		<p>In fact, any line passing through (0,1) with slope a multiple of 3 will pass through these exact points! The pattern here, and in our previous example, is that these slopes are all equal modulo 3: any multiple of 3 is zero modulo 3. The inverse of 2 is 2 (since \(2*2 =4 \equiv 1 \pmod{3}\)), which we identify with 1/2; then we recognize that \(-1 \equiv 2 \pmod{3}\). This will help us to classify all slopes!
+		</div>
+
+		<BUTTON ONCLICK="ShowAndHide('Question3')">Show/hide question 3</BUTTON>
+
+		<div ID="Question3" STYLE="display:none">
+		
+		<p> 
+			We have already seen that we have a zero slope (horizontal). We can also find slope 1 and slope 2 (which happens to be the same as 1/2 as above). Finally, there is the vertical slope, for a total of 4 slopes. 
+		</p>
+
+		<p>
+			Why aren't there any more possible slopes on the 3 x 3 grid? If we have a line and two points on our grid (x,y) and (w,z), then the slope is the "rise over run," equal to \(\frac{y-z}{w-x}\), but remember: we're interpreting everything modulo 3! If the denominator is 0 modulo 3, we get the vertical slope. Otherwise, it is 1 or 2 modulo 3, which we can invert, giving us that the slope is either equivalent to 0, 1, or 2 modulo 3 if it is not vertical.
+		</p>
+
+		</div>
+
+		<BUTTON ONCLICK="ShowAndHide('Question4')">Show/hide question 4</BUTTON>
+
+		<div ID="Question4" STYLE="display:none">
+		
+		<p> 
+			Here is an example of a Kakeya set on the 3 x 3 grid containing only 7 points. The four lines shown have slopes of <text style="color:blue;">vertical</text>, <text style="color:red;">0</text>, <text style="color:yellow;">1</text>, and <text style="color:green;">2</text>.
+		</p>
+		<center><script type="text/tikz">
+\begin{tikzpicture}[scale = 2]
+    \filldraw (0,0) circle (2pt);
+    \filldraw (1,0) circle (2pt);
+    \filldraw (2,0) circle (2pt);
+    \filldraw (0,1) circle (2pt);
+    \filldraw (1,1) circle (2pt);
+    \filldraw (2,1) circle (2pt);
+    \draw (2,1) circle (4pt);
+    \filldraw (0,2) circle (2pt);
+    \filldraw (1,2) circle (2pt);
+    \draw (1,2) circle (4pt);
+    \filldraw (2,2) circle (2pt);
+
+    \draw[red, thick] (0,0) -- (2,0);
+    \draw[blue, thick] (0,0) -- (0,2);
+    \draw[yellow, thick] (0,0) -- (2,2);
+    \draw[green, thick] (0,1) -- (0.75,2.5);
+    \draw[green, thick] (0.75, -0.5) -- (2,2);
+    \draw[green, thick] (0,1) -- (0.5,2);
+  \end{tikzpicture}
+</script></center>
+
+		<p>
+			Can this be done using only six points? Try to prove conclusively that 7 are necessary, or find an example with only six points and send it to me!
+		</p>
+
+		</div>
+
+		<h3> Instructor notes</h3>
+
+		<p>
+			I was originally inspired to write this lesson by a graduate student seminar talk on the Kakeya problem. The first time I taught it was for our advanced high school math circle, and it was fun because of the open-endedness: I gave the students time to think on their own and explore what the most reasonable definition of "line" and "slope" should be, before having us settle on the one I outline above. 
+		</p>
+
+		<p>
+			Depending on how much or little the students know about modular arithmetic and finite fields --- and how much time is available --- when I teach this lesson again, I will probably either (a) just define the lines on the grid as above or (b) give the students more time to explore this and make their own definitions. Even with the definition given, there's a lot to explore, such as when two lines that a priori are different happen to coincide (Question 2 above).
+		</p>
+
+</div>
+</body>
+
+</html>

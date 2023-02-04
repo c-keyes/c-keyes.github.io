@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+
+<html>
+
+<head>
+	<title>Christopher Keyes - Blog</title>
+	<link rel="stylesheet" type="text/css" href="style.css" />
+	<script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+	<script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+</head>
+
+<body>
+	<header>
+		Christopher Keyes
+	</header>
+
+	<script src="nav.js"></script>
+
+	<div id="rounded">
+
+		<h2>Talking Baseball: Scoring Without Hits</h2>
+
+			<p><em>(Originally published on May 16, 2022)</em></p>
+
+			<p><em>This is part of a series of posts on sabermetrics and the mathematics of baseball. You can find more <a href = "./blog_talking_baseball.html">here</a>.</em></p>
+
+			<p>
+				Yesterday, (May 15, 2022) the <a href = "https://www.mlb.com/news/reds-lose-after-8-no-hit-innings-vs-pirates">Cincinnati Reds no hit the Pittsburgh Pirates</a>, but <em>lost</em> the game 1-0. We know that <a href="./blog_no_hitters.html">no hitters are quite rare</a> --- only about 1 in 1000 MLB games from 1998 - 2019 were no hitters --- but <em>losing</em> a no hit game has only happened <a href="https://www.mlb.com/news/pitchers-to-throw-no-hitter-and-lose">a handful of times in MLB history</a>.
+			</p>
+
+			<p>
+				How does this happen? Yesterday, the Pirates shut out the Reds and managed to score their lone run in the bottom of the 8th, thanks to back-to-back-to-back one out walks to load up the bases, followed by an RBI fielder's choice (that was nearly an inning-ending double play). It isn't too difficult to come up with other potential pathways for a team to score without a hit: there could be a hit-by-pitch and a steal of second base, followed by a throwing error on a routine ground ball. Or, we might see a batter reach on a dropped third strike, advanced to second by a balk, to third by a wild pitch, and scored by a sacrifice fly.
+			</p>
+
+			<p>
+				But how often does it actually happen that a team goes an <em>entire inning</em> without recording a hit, yet manages to score a run? Using play-by-play data from the 2021 season, obtained free of charge from and copyrighted by <a href="https://www.retrosheet.org/game.htm">Retrosheet</a>, it seems that this is actually quite rare!
+			</p>
+
+			<center>
+			<style type="text/css">
+.tg  {border-collapse:collapse;border-spacing:0;}
+.tg td{border-color:black;border-style:solid;border-width:1px;font-family:Arial, sans-serif;font-size:14px;
+  overflow:hidden;padding:10px 5px;word-break:normal;}
+.tg th{border-color:black;border-style:solid;border-width:1px;font-family:Arial, sans-serif;font-size:14px;
+  font-weight:normal;overflow:hidden;padding:10px 5px;word-break:normal;}
+.tg .tg-tn1s{background-color:#f2e9e4;border-color:inherit;font-size:18px;text-align:left;vertical-align:top}
+.tg .tg-kyw1{background-color:#f2e9e4;border-color:inherit;font-size:18px;font-weight:bold;text-align:left;vertical-align:top}
+.tg caption{padding:10px 0px;}
+</style>
+<table class="tg">
+	<caption><em>MLB innings in which runs are scored and/or no hits are recorded (2021 data)</em></caption>
+<thead>
+  <tr>
+    <th class="tg-kyw1"></th>
+    <th class="tg-kyw1">Innings</th>
+    <th class="tg-kyw1">Run(s) scored</th>
+    <th class="tg-kyw1">No hits recorded</th>
+    <th class="tg-kyw1">Run(s) scored and<br>no hits recorded</th>
+  </tr>
+</thead>
+<tbody>
+  <tr>
+    <td class="tg-kyw1">Totals</td>
+    <td class="tg-tn1s">42790</td>
+    <td class="tg-tn1s">11190</td>
+    <td class="tg-tn1s">19220</td>
+    <td class="tg-tn1s">83</td>
+  </tr>
+  <tr>
+    <td class="tg-kyw1">% of innings</td>
+    <td class="tg-tn1s">100%</td>
+    <td class="tg-tn1s">26.2%</td>
+    <td class="tg-tn1s">44.9%</td>
+    <td class="tg-tn1s">0.19%</td>
+  </tr>
+</tbody>
+</table>
+			</center>
+
+			<p>
+				In just over a quarter of innings, the batting team scored one or more runs. But in almost 45% of innings they failed to record a hit. Certainly hitting and scoring runs should be dependent on one another, but just as a sanity check, if they were independent, we might expect to see an inning in which a run scores without a hit about 12% of the time, or nearly twice per game. Instead, it happened in about 1 in every 500 innings!
+			</p>
+
+			<p>
+				There are lots of other finer information we could squeeze from this data without too much additional effort. One thing would be to look at each individual team's breakdown of innings in which they scored a run or were held hitless (or both). Also note that there may be extra inning games included, where a runner started the inning on second base! I would be interested to go back and check how often the designated runner came around to score without a hit, and what we get if these cases were excluded.
+			</p>
+
+		<h3>Some fun heuristic applications</h3>
+
+			<p> 
+				From the data above, we might make the assumption that in an average MLB (half) inning, the probability of a run being scored is \(P(\geq 1 \text{ run}) = 0.262\). Similarly, we can make the assumptions
+				\[P(0 \text{ hits}) = 0.449,\]
+				\[P(\geq 1 \text{ run AND } 0 \text{ hits}) = 0.0019,\]
+				allowing us to compute the conditional probabilities
+				\[P(\geq 1 \text{ run} \mid 0 \text{ hits}) = 0.0043\]
+				\[P(0 \text{ hits} \ |  \geq 1 \text{ run}) = 0.0074.\]
+				Thus with our assumptions, the probability of a team being no hit for 9 innings in a row is
+				\[P(\text{no hit over 9 IP}) = P(0 \text{ hits})^9 = 0.00074.\]
+				Over a 2430 game season, remembering that there are two teams playing 9 innings each per game, this makes the expected number of no hitters in a season about 3.6. This is a little higher than the figure I came to in <a href="./blog_no_hitters.html">a previous post</a>, but here I'm only using 2021 data, in which a record nine no hitters occurred. (If anything, this might suggest that those nine no hitters were <em>less unlikely</em> than I previously claimed!)
+			</p>
+
+			<p>
+				We can also answer the question: <em>how likely is a no hit team to score a run?</em> Using our 2021 data, and assuming the team is no hit over a full 9 inning game, we can compute the probability of scoring in at least one of those 9 innings by
+				\[P(\geq 1 \text{ run} \mid \text{ 9 inning no hitter}) = 1 - (1 - P(\geq 1 \text{ run} \mid 0 \text{ hits}))^9 = 0.0382.\]
+				That is, in about 3.8% of no hitters we expect the no hit team to score a run, in the 2021 run environment. That's 1 in every 26 no hitters.
+			</p>
+
+			<p>
+				How close is this to reality? In 25 of the 316 <a href="https://en.wikipedia.org/wiki/List_of_Major_League_Baseball_no-hitters">official MLB no hitters</a> since 1876, the no hit team has scored a run. That's more like 8%, which suggests to me that the no hit team may have been <em>more likely</em> to score in the run environment of previous years than in 2021. Indeed, if we restrict our attention to the 72 official no hitters between 1998 and today, only once (Ervin Santana's in 2011) has the no hit team scored a run, or about 1.4% of the time. Yesterday's game doesn't count as an <em>official</em> no hitter, because the Pirates didn't need to bat in the bottom of the 9th.
+			</p>
+
+			<p>
+				What about the <em>exact</em> scenario that happened with the Reds and Pirates? How likely is it that any given game has
+				<ol>
+					<li>the visiting team shut out over 9 innings,</li>
+					<li>the home team no hit over the first 8 innings, with</li>
+					<li>at least one run scored over those 8 innings?</li>
+				</ol>
+				Using our data, we calculate
+				\[P(\text{shutout over 9 IP}) = (1 - P(\geq 1 \text{ run}))^9 = 0.065,\]
+				\[P(\text{no hit over 8 IP}) = P(0 \text{ hits})^8 = 0.0017, \text{ and}\]
+				\[P(\geq 1 \text{ run} \mid \text{ 8 inning no hitter}) = 1 - (1 - P(\geq 1 \text{ run} \mid 0 \text{ hits}))^8 = 0.034.\]
+				Treating the probabilities of the visiting team being shut out and the home team being no hit independently, the product gives the likelihood of any given game satisfying these three requirements:
+				\[P((1) \text{ AND } (2) \text{ AND } (3)) = 3.7 \times 10^{-6}.\]
+				That is equivalent to once in every 270,000 or so MLB games. Or, if two "average" 2021 MLB teams played each other for the equivalent of 111 full regular seasons (2,430 games each), we would expect this to happen only once.
+			</p>
+
+		<h3>Concluding thoughts</h3>
+
+		<p>
+			This was a fun mini-project to help me get the hang of the (very) basics of working with Retrosheet data. I used only the <tt>bevent</tt> tool, <a href="https://www.retrosheet.org/tools.htm">available for download</a> on their site to process the 2021 season data for each of the 30 teams. It was a bit cumbersome to run the same program 30 separate times, then manipulate each file of results in a spreadsheet 30 separate times, then compile it all together to get the league-wide averages. I'm sure I could find a faster and better way to do this, and I'd need to in order to calculate similar stats for previous seasons.
+		</p>
+
+		<p>
+			Thinking about how often teams bat in an inning without a hit seems especially timely, given all the talk lately around pace-of-play and keeping fans engaged with the game. While a no hitter is certainly an exciting feat, hits are also exciting; there's a crack of the bat, frantic searching (or camera panning) for the ball, sprinting for extra bases, and outfield throws attempting to deny them. 45% is a sizeable fraction of innings to end without a single hit! I would expect (though I certainly haven't checked) that in previous seasons where the league batting average was higher, a smaller fraction of innings ended with no hits. Whether this made for a more exciting game or not, I'm not sure, but I'd be curious to confirm how this has changed over the years. 
+		</p>
+
+
+</div>
+</body>
+
+</html>

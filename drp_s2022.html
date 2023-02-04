@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+
+<html>
+
+<head>
+	<title>Christopher Keyes - DRP Spring 2022</title>
+	<link rel="stylesheet" type="text/css" href="style.css" />
+</head>
+
+<body>
+	<header>
+		Christopher Keyes
+	</header>
+
+	<script src="nav.js"></script>
+
+	<div id="rounded">
+
+		<h2>
+			Sports analytics DRP: Spring 2022
+		</h2>
+
+		<p> <strong>Main resource</strong>: <em>Sabermetrics 101: Introduction to Baseball Analytics</em>, <a href = "https://www.edx.org/course/sabermetrics-101-introduction-to-baseball-analytic">available on EdX</a>.</p>
+
+		<p> <strong>Statistics resources</strong>: Dallal's <a href = "http://www.jerrydallal.com/LHSP/LHSP.HTM"><em>The Little Handbook of Statistical Practices</em></a>, <a href = "https://onlinestatbook.com/2/index.html">OnlineStatBook</a></p>
+
+		<p> <strong>More resources</strong>: <a href ="https://baseballsavant.mlb.com/">Baseball savant</a>, <a href="https://library.fangraphs.com/misc/re24/">RE24</a>, <a href = "https://www.fangraphs.com/">FanGraphs</a>, <a href = "https://books.google.com/ngrams">Google's Ngram viewer</a></p>
+
+		<p> <strong>Articles of interest</strong>:
+			<ul>
+				<li><a href = "https://www.baseballprospectus.com/news/article/41203/prospectus-feature-ops-and-woba-briefly-revisited/">OPS and wOBA, Briefly Revisited</a></li>
+				<li><a href = "https://www.baseballprospectus.com/news/article/878/pitching-and-defense-how-much-control-do-hurlers-have/">Pitching and Defense: How Much Control Do Hurlers Have?</a></li>
+				<li><a href = "https://library.fangraphs.com/principles/linear-weights/">Linear Weights</a></li>
+				<li><a href = "http://www.tangotiger.net/re24.html">Tom Tango's RE matrices</a></li>
+				<li><a href = "https://gregstoll.com/~gregstoll/baseball/stats.html#V.0.1.0.1.0.0">Greg Stoll's Win Expectancy Finder</a></li>
+				<li><a href = "http://blog.philbirnbaum.com/2012/04/why-10-runs-equals-1-win.html">Phil Birnbaum's blog post on runs to wins</a></li>
+			</ul>
+
+		<h3>
+			Week 0 (1/18/22)
+		</h3>
+
+		<p> <strong>Reading</strong>: N/A </p>
+		<p> Discussed the use of the EdX course, our respective backgrounds. Came up with several possible questions which (we hope) can be answered with Sabermetric analysis.</p>
+		<ul>
+			<li>With a runner on base and no outs, is it worth it to sacrifice bunt? (And similar hypothetical managerial situations)
+			<li>How much is a double worth relative to a single? How do we quantify this?
+		</ul>
+
+		<h3>
+			Week 1 (1/26/22)
+		</h3>
+
+		<p> <strong>Reading</strong>: Up to (possibly beyond) Module 1, <em>What is a database?</em> This <a href = "https://www.newyorker.com/magazine/2003/07/14/the-professor-of-baseball">New Yorker article</a> about Bill James was pretty interesting.</p>
+		<p> <strong>Exercises</strong>: Set up SQL server and practice making queries</p>
+		<ul>
+			<li><a href = "https://dev.mysql.com/downloads/">MySQL community downloads</a></li>
+			<li><a href = "https://stackoverflow.com/questions/41093291/importing-lahman-baseball-database-into-mysql">Stack Exchange post</a> on importing Lahman database (see Webucator's answer)</li>
+			<li><a href = "https://medium.com/macoclock/mysql-on-mac-getting-started-cecb65b78e">MySQL setup tutorial for MacOS</a></li>
+		</ul>
+
+		<h3>
+			Week 2 (2/1/22)
+		</h3>
+
+		<p> <strong>Reading</strong>: Finish (?) Module 1</p>
+		
+
+		<h3>
+			Week 3 (2/8/22)
+		</h3>
+
+		<p> <strong>Reading</strong>: Start Module 2</p>
+		<p> <strong>Exercises</strong>: </p>
+		Some SQL questions:
+		<ul>
+			<li>How can we access information from a different table while querying (e.g. while searching for batting statistics, display player's name instead of ID)?</li>
+			<li>Can we find the most common last name of MLB players over the years? Is SQL the right tool for this?</li>
+			<li>What could we measure and analyze if it was tracked by statcast?</li>
+		</ul>
+		Hitting metrics:
+		<ul>
+			<li>Impact on runs scored: BA accounts for about 67%, defensive outs accounts for less than 1% (this makes sense!)</li>
+			<li>Somewhat surprisingly, home runs allowed accounts for about 24% of variation in runs scored. A possible explanation could be that more home runs hit accross the league leads to more home runs hit by each time, and thus more runs scored in those seasons that everyone hit more home runs. Another could be playing in a home run friendly park</li>
+			<li>Whenever we are asking how one metric is related to another, we must consider the other factors at play, especially if we want to compare across historical eras.</li>
+			<li>Understand how wOBA is calculated. How might we approximate this if we didn't have massive amounts of historical base-out data?</li>
+		</ul>
+
+		<h3>
+			Week 4 (2/15/22)
+		</h3>
+
+		<p> <strong>Reading</strong>: Continuing with Module 2</p>
+		<p> <strong>Exercises</strong>: </p>
+		<ul>
+			<li>With a runner on first and no outs, <em>how confident should you be</em> to send the runner to second in a stolen base attempt? This can be determined by finding the change in run expectancy of the relevant base-out states and seeing what level of confidence gives a positive value (it's around 70% for 0, 1, and 2 outs!). </li>
+		</ul>
+
+		SQL comments:
+		<ul>
+			<li>The aggregate functions (AVG, SUM, STDDEV, etc.) allow us to aggregate information.</li>
+			<li>The GROUP BY modifier allows us to aggregate over subsets. For example, we might calculate average home runs for each team since 2010.</li>
+			<li>The HAVING command allows conditionals just like we would use WHERE on column data; for example we might only display those teams averaging more than some number of home runs per year.</li>
+			<li>This could also be useful for computing career totals, including grouping by position for fielding data, etc.</li>
+		</ul>
+
+		<h3>
+			Week 5 (2/22/22)
+		</h3>
+
+		<p> <strong>Reading</strong>: </p>
+		<p> <strong>Exercises</strong>: </p>
+		<ul>
+			<li>Multiple/nested SELECT statements are useful, e.g. inside a HAVING statement to return only the batters with more home runs than David Ortiz in 2014.</li>
+		</ul>
+
+		<h3>
+			Week 6 (3/1/22)
+		</h3>
+
+		<p> <strong>Reading</strong>: Continuing with Module 3 (runs to wins)</p>
+		<p> <strong>Exercises</strong>: </p>
+		<ul>
+			<li>SQL question: How to execute a query that finds the top 10 HR hitters each season? Answer: use partition_over; see <a href = "http://www.silota.com/docs/recipes/sql-top-n-group.html">this resource</a>.</li>
+			<li>How do we measure "separation" among league leaders? Was Babe Ruth a better home run hitter in the 1920s than Pete Alonso more recently? Is there a distribution for this?</li>
+			<li>How do we arrive at 10 runs per win? Several options: <a href = "http://blog.philbirnbaum.com/2012/04/why-10-runs-equals-1-win.html">heuristic argument</a>, differentiating a winning percentage estimator, etc.</li>
+		</ul>
+
+		<h3>
+			Week 7 (3/8/22) --- Spring Break! NO MEETING
+		</h3>
+
+		<h3>
+			Week 8 (3/15/22)
+		</h3>
+
+		<p> <strong>Reading</strong>: Finishing Module 3</p>
+		<p> <strong>Exercises</strong>: </p>
+		<ul>
+			<li>SQL answer: "Join" statements allow us to get data across multiple tables. For instance, we can replace "playerID" with a player's actual name by joining the batting and people tables along the playerID field.</li>
+			<li>How should draft picks be valued? In terms of career production, production under team control, historical trade value? <a href="https://www.profootballnetwork.com/nfl-trade-value-charts-different-draft-trade-value-charts-to-follow/">The NFL uses different charts</a> to estimate this value, but it's not always clear what they are based on.</li>
+		</ul>
+
+		<h3>
+			Week 9 (3/22/22)
+		</h3>
+
+		<p> <strong>Reading</strong>: </p>
+		<p> <strong>Exercises</strong>: </p>
+		<ul>
+			<li>Interesting <a href = "http://blog.philbirnbaum.com/2021/08/are-umpires-racially-biased-2021-study.html">blog posts</a> by Phil Birnbaum on (lack of?) umpire raical bias</li>
+			<li>Subleties with "join" statement: only connects matching entries in resulting table. So if we wanted to join pitching and batting data it would only keep data (rows) where both pitching and batting happened.</li>
+			<li>Comparing correlations between various metrics and team runs. Does there exist a verison of wOBA which is more optimal? Not really!</li>
+		</ul>
+
+		<h3>
+			Week 10 (3/29/22)
+		</h3>
+
+		<p> <strong>Reading</strong>: Start Module 4</p>
+		<p> <strong>Exercises</strong>: </p>
+		<ul>
+			<li></li>
+		</ul>
+
+		<h3>
+			Week 11 (4/5/22)
+		</h3>
+
+		<p> <strong>Reading</strong>: </p>
+		<p> <strong>Exercises</strong>: </p>
+		<ul>
+			<li></li>
+		</ul>
+
+		<h3>
+			Week 12 (4/12/22)
+		</h3>
+
+		<p> <strong>Reading</strong>: </p>
+		<p> <strong>Exercises</strong>: Discussed how to find statcast data and more</p>
+		<ul>
+			<li>Correlations between hard hit percentage and BABIP, HR/FB</li>
+			<li>Relationship between exit velo and run expectancy (using statcast data)</li>
+			<li>Downloading data from <a href="https://baseballsavant.mlb.com/statcast_search">statcast searches</a></li>
+			<li>Other ways to accesss statcast data? <a href="https://www.youtube.com/watch?v=swJr4u-HYr0&ab_channel=RobertFrey">Youtube video</a>, <a href="https://www.mattefay.com/scraping-storing-statcast-data">Matt Fay blog</a>? </li>
+		</ul>
+
+		<h3>
+			Week 13 (4/19/22)
+		</h3>
+
+		<p> <strong>Reading</strong>: </p>
+		<p> <strong>Exercises</strong>: </p>
+		<ul>
+			<li></li>
+		</ul>
+
+		<h3>
+			Final presentations TBD
+		</h3>
+	</div>
+</body>
+
+</html>

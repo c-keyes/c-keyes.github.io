@@ -1,0 +1,449 @@
+<!DOCTYPE html>
+
+<html>
+
+<head>
+	<title>Christopher Keyes - Blog</title>
+	<link rel="stylesheet" type="text/css" href="style.css" />
+	<script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+	<script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+</head>
+
+<body>
+	<header>
+		Christopher Keyes
+	</header>
+
+	<script src="nav.js"></script>
+
+	<div id="rounded">
+
+		<h2>Talking Baseball: A case study in win probability and leverage</h2>
+
+			<p><em>(Originally published on April 25, 2022)</em></p>
+
+      <p><em>This is part of a series of posts on sabermetrics and the mathematics of baseball. You can find more <a href = "./blog_talking_baseball.html">here</a>.</em></p>
+
+      <p>
+            On Saturday (April 23rd, 2022) the Boston Red Sox had a bizarre contest against the Tampa Bay Rays. While the Rays threw a combined no-hitter over the first 9 innings, the Red Sox held the Rays to only two baserunners in that span, sending the game to extra innings tied 0-0. In the top of the 10th, with the <a href="https://www.espn.com/mlb/story/_/id/33640380/mlb-players-association-agree-keep-automatic-runners-extra-innings-2022">designated runner on second base</a>, the Red Sox scored two runs to go up 2-0. Here's the <a href="https://www.mlb.com/gameday/red-sox-vs-rays/2022/04/23/661941#game_state=final,lock_state=final,game_tab=play-by-play,game=661941">play-by-play</a> for the bottom of the 10th:
+            <ol>
+                  <li>Ji-Man Choi strikes out. 1 out.</li>
+                  <li>Josh Lowe strikes out. 2 out.</li>
+                  <li>Balk. Designated runner Randy Arozarena advances to 3rd.</li>
+                  <li>Taylor Walls reaches on error (by second baseman Trevor Story). Arozarena scores. Rays trail 1-2.</li>
+                  <li>Walls steals second base.</li>
+                  <li>Kevin Kiermaier hits a home run. Walls scores. Rays win 3-2.</li>
+            </ol>
+            With the runner starting on second base, one swing of the bat could have tied the game at any moment. Still, especially once there were two outs, it felt like the Red Sox were solidly in control of the game, right up until Kiermaier's blast. But what does the data say? Can we measure the effect of the balk, error, and steal on the win probability, and does this match my viewer's intutition?
+      </p>
+
+      <h3>Historical win probability</h3>
+
+      <p>
+            There are different ways to estimate win probability. One is simply to comb through historical data and check how often a team in a certain situation went on to win the game. <a href="https://gregstoll.com/~gregstoll/baseball/stats.html#H.-2.10.0.3.0.0.2000.2019">Greg Stoll's Win Expectancy Finder</a> lets us do just that. Between 2000 - 2019, there were 11 games in which the visiting team led by two runs in the bottom of the 10th inning, with a runner on 2nd base. In 9 of those games the visiting team went on to win, so we can estimate that the Red Sox win probability at the start of the bottom of the 10th inning was about 9/11, 82%. The table below shows how these historical probabilities changed throughout the inning, calculated the same way.
+      </p>
+
+      <p>
+            <center>
+                  <style type="text/css">
+.tg  {border-collapse:collapse;border-spacing:0;}
+.tg td{border-color:black;border-style:solid;border-width:1px;font-family:Arial, sans-serif;font-size:14px;
+  overflow:hidden;padding:10px 5px;word-break:normal;}
+.tg th{border-color:black;border-style:solid;border-width:1px;font-family:Arial, sans-serif;font-size:14px;
+  font-weight:normal;overflow:hidden;padding:10px 5px;word-break:normal;}
+.tg .tg-f2e2{background-color:#f2e9e4;font-size:18px;font-weight:bold;text-align:left;vertical-align:top}
+.tg .tg-7c7f{background-color:#f2e9e4;font-size:18px;text-align:left;vertical-align:top}
+</style>
+<table class="tg">
+<thead>
+  <tr>
+    <th class="tg-f2e2">Score</th>
+    <th class="tg-f2e2">Out</th>
+    <th class="tg-f2e2">Runner(s)</th>
+    <th class="tg-f2e2">Batter</th>
+    <th class="tg-f2e2">Win Probability<br>(Visiting Team)</th>
+    <th class="tg-f2e2">Total Games<br>(2000 - 2019)</th>
+    <th class="tg-f2e2">Actual<br>Outcome</th>
+  </tr>
+</thead>
+<tbody>
+  <tr>
+    <td class="tg-7c7f">V +2</td>
+    <td class="tg-7c7f">0</td>
+    <td class="tg-7c7f">020</td>
+    <td class="tg-7c7f">Choi</td>
+    <td class="tg-7c7f">82%</td>
+    <td class="tg-7c7f">11</td>
+    <td class="tg-7c7f">Strikeout</td>
+  </tr>
+  <tr>
+    <td class="tg-7c7f">V +2</td>
+    <td class="tg-7c7f">1</td>
+    <td class="tg-7c7f">020</td>
+    <td class="tg-7c7f">Lowe</td>
+    <td class="tg-7c7f">83%</td>
+    <td class="tg-7c7f">30</td>
+    <td class="tg-7c7f">Strikeout</td>
+  </tr>
+  <tr>
+    <td class="tg-7c7f">V +2</td>
+    <td class="tg-7c7f">2</td>
+    <td class="tg-7c7f">020</td>
+    <td class="tg-7c7f">Walls</td>
+    <td class="tg-7c7f">94%</td>
+    <td class="tg-7c7f">54</td>
+    <td class="tg-7c7f">Balk</td>
+  </tr>
+  <tr>
+    <td class="tg-7c7f">V +2</td>
+    <td class="tg-7c7f">2</td>
+    <td class="tg-7c7f">003</td>
+    <td class="tg-7c7f">Walls</td>
+    <td class="tg-7c7f">100%</td>
+    <td class="tg-7c7f">12</td>
+    <td class="tg-7c7f">Reach on error</td>
+  </tr>
+  <tr>
+    <td class="tg-7c7f">V +1</td>
+    <td class="tg-7c7f">2</td>
+    <td class="tg-7c7f">100</td>
+    <td class="tg-7c7f">Kiermaier</td>
+    <td class="tg-7c7f">90.5%</td>
+    <td class="tg-7c7f">126</td>
+    <td class="tg-7c7f">Stolen base</td>
+  </tr>
+  <tr>
+    <td class="tg-7c7f">V +1</td>
+    <td class="tg-7c7f">2</td>
+    <td class="tg-7c7f">020</td>
+    <td class="tg-7c7f">Kiermaier</td>
+    <td class="tg-7c7f">91%</td>
+    <td class="tg-7c7f">69</td>
+    <td class="tg-7c7f">Home Run</td>
+  </tr>
+  <tr>
+    <td class="tg-7c7f">V -1</td>
+    <td class="tg-7c7f">2</td>
+    <td class="tg-7c7f">000</td>
+    <td class="tg-7c7f"></td>
+    <td class="tg-7c7f">0%</td>
+    <td class="tg-7c7f">N/A</td>
+    <td class="tg-7c7f">Rays win</td>
+  </tr>
+</tbody>
+</table>
+            </center>
+      </p>
+
+      <p>
+            Pre-pandemic, i.e. before the designated runner rule, a two run lead in extras was indeed a lot safer. Using the 2000 - 2019 season data, 250 MLB games reached the bottom of the 10th with the visiting team ahead by two, no runners on base, and no outs. The visiting team went on to win 231 of them, or about 92.4%.
+      </p>
+
+      <h3>Win probability via run expectancy</h3>
+
+      <p>
+            We could also use expected run values to estimate win probability in each situation. This avoids issues with small sample sizes and allows more careful finetuning of the run environment, if needed. In the situation of this particular game, the visiting Red Sox were ahead by two, so three things could have happened:
+            <ul>
+                  <li>Rays score 0-1 runs &#x2192; Red Sox win,</li>
+                  <li>Rays score 2 runs &#x2192; go to 11th inning tied,</li>
+                  <li>Rays score 3 or more runs &#x2192; Rays win.</li>
+            </ul>
+            Let's make the heuristic assumption that if the game goes to an 11th inning, there is a 50-50 chance that either team wins. We certainly could do something more sophisticated here, but if the two teams went 9 innings tied 0-0 (which they did), it seems reasonably fair to me for this heuristic. Now we can translate win probability into run scoring probabilities,
+            \[\mathrm{Prob}(V \text{ win}) = \mathrm{Prob}(H \text{ score } \leq 1) + \frac{1}{2} \cdot \mathrm{Prob}(H \text{ score } 2) + 0 \cdot \mathrm{Prob}(H \text{ score } \geq 3).\]
+            Here \(V\) stands for the visiting team and \(H\) stands for the home team. We can similarly write
+            \[\mathrm{Prob}(V \text{ win}) = 1 - \mathrm{Prob}(H \text{ win}) = 1 - \frac{1}{2} \cdot \mathrm{Prob}(H \text{ score } 2) - \mathrm{Prob}(H \text{ score } \geq 3)\]
+            which will be somewhat more convenient. Note also that these calculations are specific for the situation that the visiting team is up by 2 runs, but an analogous calculation would work for other lead amounts!
+      </p>
+
+      <p>
+            To estimate the scoring probabilities, we once again turn to <a href="https://gregstoll.com/~gregstoll/baseball/stats.html#H.-2.10.0.3.0.0.2021.2021">Greg Stoll's win expectancy finder</a>. This time, we look at more recent 2021 scoring data, which tells us that on average, with no outs and a runner on second base, the batting team scored no runs 38.4% of the time, one run 32.4% of the time, two runs 14.9% of the time, and 3 or more runs 14.4% of the time. Assuming an average performance by the Rays, the above formula suggests that
+            \[\mathrm{Prob}(V \text{ win}) = 100\% - \frac{1}{2} \cdot 14.9\% - 14.4\% = 78.2\%.\]
+            Below we repeat these calculations for the entire inning.
+      </p>
+
+      <p><center>
+            <style type="text/css">
+.tg  {border-collapse:collapse;border-spacing:0;}
+.tg td{border-color:black;border-style:solid;border-width:1px;font-family:Arial, sans-serif;font-size:14px;
+  overflow:hidden;padding:10px 5px;word-break:normal;}
+.tg th{border-color:black;border-style:solid;border-width:1px;font-family:Arial, sans-serif;font-size:14px;
+  font-weight:normal;overflow:hidden;padding:10px 5px;word-break:normal;}
+.tg .tg-tn1s{background-color:#f2e9e4;border-color:inherit;font-size:18px;text-align:left;vertical-align:top}
+.tg .tg-kyw1{background-color:#f2e9e4;border-color:inherit;font-size:18px;font-weight:bold;text-align:left;vertical-align:top}
+.tg .tg-f2e2{background-color:#f2e9e4;font-size:18px;font-weight:bold;text-align:left;vertical-align:top}
+.tg .tg-7c7f{background-color:#f2e9e4;font-size:18px;text-align:left;vertical-align:top}
+</style>
+<table class="tg">
+<thead>
+  <tr>
+    <th class="tg-kyw1">Score</th>
+    <th class="tg-kyw1">Out</th>
+    <th class="tg-kyw1">Runner(s)</th>
+    <th class="tg-kyw1">Batter</th>
+    <th class="tg-f2e2">Prob(Rays tie)</th>
+    <th class="tg-f2e2">Prob(Rays go ahead)</th>
+    <th class="tg-kyw1">Win Probability<br>(Visiting Team)</th>
+    <th class="tg-kyw1">Actual<br>Outcome</th>
+  </tr>
+</thead>
+<tbody>
+  <tr>
+    <td class="tg-tn1s">V +2</td>
+    <td class="tg-tn1s">0</td>
+    <td class="tg-tn1s">020</td>
+    <td class="tg-tn1s">Choi</td>
+    <td class="tg-7c7f">14.9%</td>
+    <td class="tg-7c7f">14.4%</td>
+    <td class="tg-tn1s">78.2%</td>
+    <td class="tg-tn1s">Strikeout</td>
+  </tr>
+  <tr>
+    <td class="tg-tn1s">V +2</td>
+    <td class="tg-tn1s">1</td>
+    <td class="tg-tn1s">020</td>
+    <td class="tg-tn1s">Lowe</td>
+    <td class="tg-7c7f">10.4%</td>
+    <td class="tg-7c7f">7.8%</td>
+    <td class="tg-tn1s">87.1%</td>
+    <td class="tg-tn1s">Strikeout</td>
+  </tr>
+  <tr>
+    <td class="tg-tn1s">V +2</td>
+    <td class="tg-tn1s">2</td>
+    <td class="tg-tn1s">020</td>
+    <td class="tg-tn1s">Walls</td>
+    <td class="tg-7c7f">4.9%</td>
+    <td class="tg-7c7f">2.6%</td>
+    <td class="tg-tn1s">94.9%</td>
+    <td class="tg-tn1s">Balk</td>
+  </tr>
+  <tr>
+    <td class="tg-tn1s">V +2</td>
+    <td class="tg-tn1s">2</td>
+    <td class="tg-tn1s">003</td>
+    <td class="tg-tn1s">Walls</td>
+    <td class="tg-7c7f">5.3%</td>
+    <td class="tg-7c7f">2.6%</td>
+    <td class="tg-tn1s">94.8%</td>
+    <td class="tg-tn1s">Reach on error</td>
+  </tr>
+  <tr>
+    <td class="tg-tn1s">V +1</td>
+    <td class="tg-tn1s">2</td>
+    <td class="tg-tn1s">100</td>
+    <td class="tg-tn1s">Kiermaier</td>
+    <td class="tg-7c7f">5.6%</td>
+    <td class="tg-7c7f">7.2%</td>
+    <td class="tg-tn1s">90.0%</td>
+    <td class="tg-tn1s">Stolen base</td>
+  </tr>
+  <tr>
+    <td class="tg-tn1s">V +1</td>
+    <td class="tg-tn1s">2</td>
+    <td class="tg-tn1s">020</td>
+    <td class="tg-tn1s">Kiermaier</td>
+    <td class="tg-7c7f">14.2%</td>
+    <td class="tg-7c7f">7.5%</td>
+    <td class="tg-tn1s">85.4%</td>
+    <td class="tg-tn1s">Home Run</td>
+  </tr>
+  <tr>
+    <td class="tg-tn1s">V -1</td>
+    <td class="tg-tn1s">2</td>
+    <td class="tg-tn1s">000</td>
+    <td class="tg-tn1s"></td>
+    <td class="tg-7c7f">N/A</td>
+    <td class="tg-7c7f">N/A</td>
+    <td class="tg-tn1s">0%</td>
+    <td class="tg-tn1s">Rays win</td>
+  </tr>
+</tbody>
+</table>
+      </center></p>
+
+      <p>
+            While I was watching the game, I was surprised to hear commentator (and former Red Sox) Kevin Youkilis say that the balk moving the runner over to third didn't really matter. But this model agrees with his assertion, as we see the win expectancy dropped only by a miniscule 0.1%. Why? The Rays needed to score <em>two</em> runs to tie, so it's the current batter, not the the runner on second/third that really counts. In fact, some teams are even <a href="https://www.cbssports.com/mlb/news/mlb-trends-why-the-dodgers-and-rays-are-starting-baseballs-intentional-balk-era/">balking intentionally</a> with multi-run leads to let a runner advance from second to third, to combat potential sign stealing.
+      </p>
+
+      <p>
+            Also interesting is that the error by second baseman Trevor Story that allowed Walls to reach base only lowered the Red Sox win probability by about 5%, from 94.8% to 90.0%. Of course, had he made an accurate throw for the third out, the game would have ended with a Red Sox win, but with two outs they still were in a reasonably good position. 
+      </p>
+
+      <p>
+            Note that we could refine this approach by using more specific values instead of league averages from 2021. For instance, we might take into account how likely the <em>Rays</em> score runs in these various situations, or conversely how well the Red Sox pitching and defense can prevent runs. We also might try to take into account the specific batters at the plate, for example by using a batter's wOBA value to predict the run expectancy as in <a href="https://blogs.fangraphs.com/introducing-the-batter-specific-run-expectancy-tool/">this FanGraphs article</a>.
+      </p>
+
+      <h3>Leverage</h3>
+
+      <p>
+            By both of our methods of estimating win probability, the Red Sox were favored to win this game throughout the bottom of the 10th. Anyone watching, however, realized that a home run could have tied the game at 2-2 in one swing. Going by <a href="https://www.baseball-reference.com/leagues/majors/2022.shtml">MLB averages for the 2022 season</a> (through 4/23/22) about 2.4% of plate appearances end in a home run, so this outcome is rather unlikely. For comparison, an out (of any type) occurs in about 70% of plate appearances, while a hit occurs in about 20%.
+      </p>
+
+      <p>
+            The <em>leverage index</em> is a metric that attempts to quantify how much the outcome of the game hinges on the outcome of the current play. To compute it, we must consider the possible outcomes of the current plate appearance and how they affect win probability. 
+      </p>
+
+      <p>
+            Let's look at Kevin Kiermaier's at bat when he hit the game winning home run. We determined above that the win probability for the Red Sox was 85.4% at the time. If instead he walked (which occurs about 9% of the time on average), there would have been runners at first and second with two outs, with the Rays still down by 1 run. Using our win probability calculations from earlier, we find the Red Sox win probability is 82.3%, representing a <em>decrease</em> in win probability by about 3.1%.
+      </p>
+
+      <p>
+            We can similarly compute the changes in win probability for if Kiermaier gets out, is hit by the pitch, or gets a hit. For the purposes of this exercise, let's assume that if he singles (or gets any other hit), the runner scores from second base, tying the game. Using MLB-wide data from the 2022 season so far, we estimate the likelihood of each outcome using the proportion of plate appearances that ended in each outcome, ignoring anything other than these seven.
+      </p>
+
+      <p><center>
+            <style type="text/css">
+.tg  {border-collapse:collapse;border-spacing:0;}
+.tg td{border-color:black;border-style:solid;border-width:1px;font-family:Arial, sans-serif;font-size:14px;
+  overflow:hidden;padding:10px 5px;word-break:normal;}
+.tg th{border-color:black;border-style:solid;border-width:1px;font-family:Arial, sans-serif;font-size:14px;
+  font-weight:normal;overflow:hidden;padding:10px 5px;word-break:normal;}
+.tg .tg-tn1s{background-color:#f2e9e4;border-color:inherit;font-size:18px;text-align:left;vertical-align:top}
+.tg .tg-kyw1{background-color:#f2e9e4;border-color:inherit;font-size:18px;font-weight:bold;text-align:left;vertical-align:top}
+.tg .tg-f2e2{background-color:#f2e9e4;font-size:18px;font-weight:bold;text-align:left;vertical-align:top}
+.tg .tg-7c7f{background-color:#f2e9e4;font-size:18px;text-align:left;vertical-align:top}
+</style>
+<table class="tg">
+<thead>
+  <tr>
+    <th class="tg-kyw1" rowspan="2">Outcome</th>
+    <th class="tg-f2e2" rowspan="2">Likelihood<br>of outcome</th>
+    <th class="tg-kyw1" colspan="3">New situation</th>
+    <th class="tg-f2e2" rowspan="2">Prob(Rays tie)</th>
+    <th class="tg-f2e2" rowspan="2">Prob(Rays win)</th>
+    <th class="tg-kyw1" rowspan="2">Win Probability<br>(Visiting Team)</th>
+    <th class="tg-kyw1" rowspan="2">Change in WP</th>
+  </tr>
+  <tr>
+    <th class="tg-f2e2">Out</th>
+    <th class="tg-f2e2">Runner(s)</th>
+    <th class="tg-f2e2">Score</th>
+  </tr>
+</thead>
+<tbody>
+  <tr>
+    <td class="tg-tn1s">Out (any)</td>
+    <td class="tg-7c7f">69.4%</td>
+    <td class="tg-tn1s">3</td>
+    <td class="tg-tn1s">000</td>
+    <td class="tg-tn1s">V +1</td>
+    <td class="tg-7c7f">0</td>
+    <td class="tg-7c7f">0</td>
+    <td class="tg-tn1s">100%</td>
+    <td class="tg-tn1s">+14.6%</td>
+  </tr>
+  <tr>
+    <td class="tg-tn1s">BB/HBP</td>
+    <td class="tg-7c7f">10.1%</td>
+    <td class="tg-tn1s">2</td>
+    <td class="tg-tn1s">120</td>
+    <td class="tg-tn1s">V +1</td>
+    <td class="tg-7c7f">10.4%</td>
+    <td class="tg-7c7f">12.48%</td>
+    <td class="tg-tn1s">82.3%</td>
+    <td class="tg-tn1s">-3.1%</td>
+  </tr>
+  <tr>
+    <td class="tg-tn1s">1B</td>
+    <td class="tg-7c7f">13.5%</td>
+    <td class="tg-tn1s">2</td>
+    <td class="tg-tn1s">100</td>
+    <td class="tg-tn1s">V +0</td>
+    <td class="tg-7c7f">87.2%</td>
+    <td class="tg-7c7f">12.8%</td>
+    <td class="tg-tn1s">43.6%</td>
+    <td class="tg-tn1s">-41.8%</td>
+  </tr>
+  <tr>
+    <td class="tg-tn1s">2B</td>
+    <td class="tg-7c7f">4.2%</td>
+    <td class="tg-tn1s">2</td>
+    <td class="tg-tn1s">020</td>
+    <td class="tg-tn1s">V +0</td>
+    <td class="tg-7c7f">78.3%</td>
+    <td class="tg-7c7f">21.7%</td>
+    <td class="tg-tn1s">39.2%</td>
+    <td class="tg-tn1s">-46.2%</td>
+  </tr>
+  <tr>
+    <td class="tg-tn1s">3B</td>
+    <td class="tg-7c7f">0.3%</td>
+    <td class="tg-tn1s">2</td>
+    <td class="tg-tn1s">003</td>
+    <td class="tg-tn1s">V +0</td>
+    <td class="tg-7c7f">73.0%</td>
+    <td class="tg-7c7f">27.0%</td>
+    <td class="tg-tn1s">36.5%</td>
+    <td class="tg-tn1s">-48.9%</td>
+  </tr>
+  <tr>
+    <td class="tg-tn1s">HR</td>
+    <td class="tg-7c7f">2.4%</td>
+    <td class="tg-tn1s">2</td>
+    <td class="tg-tn1s">000</td>
+    <td class="tg-tn1s">V -1</td>
+    <td class="tg-7c7f">0</td>
+    <td class="tg-7c7f">1</td>
+    <td class="tg-tn1s">0%</td>
+    <td class="tg-tn1s">-85.4%</td>
+  </tr>
+</tbody>
+</table>
+      </center></p>
+
+      <p>
+            These calculations show what we knew to be true: the game outcome depended greatly on Kiermaier's at bat. If we weight the changes in win probability by the estimated likelihood of their occurence, we find that the (absolute value of the) expected change in win probability is 20.3%.
+      </p>
+
+      <p>
+            To actually compute the leverage index, we take the ratio of the expected change in win probability to the <em>average</em> expected change in win probability. 
+            \[LI = \frac{\mathbb{E}(|\Delta_{WP}|)}{\text{Average} (|\Delta_{WP}|)}\]
+            The denominator is the average of the absolute change in win probability over all events in a given period. So, \(LI = 1\) corresponds to average leverage, while \(LI > 1\) means an above average leverage situation. Put another way, the outcome of the game hinges more on this at bat than usual.
+      </p>
+
+      <p>
+            I had trouble finding a current value for this denominator, so I used 0.0346, as suggested in <a href="https://tht.fangraphs.com/crucial-situations/">Tom Tango's article on leverage index</a> from 2006. Hopefully these values haven't changed too much. Thus for Kevin Kiermaier's at bat, the leverage index was
+            \[LI = \frac{0.203}{0.0346} = 5.85.\]
+            Unsurprisingly, this is massive! The at bat was almost six times as impactful as the average play, and of course it was, because there were two outs with a runner in scoring position in extra innings, with his team down by one.
+      </p>
+
+      <h4>Using standard deviation instead</h4>
+
+      <p>
+            Another way to do this is to use the standard deviation of the win probability in this situation and compare it to the standard deviation of win probability in an average at bat. This method is also mentioned in Tango's article above, and in <a href="https://baseballwithr.wordpress.com/2019/02/18/leverage-of-win-probabilities/">this 2019 blog post</a>. In our example, we compute
+            \[\sigma_{WP} = \sqrt{\sum_{i=1}^6 P_i \cdot (WP_i - 0.854)^2} = 0.257,\]
+            where \(i\) runs through the six rows in the table above (i.e. \(i=1\) for an out, \(i=2\) for a walk or HBP, etc), \(P_i\) is the probability of occurence, and \(WP_i\) is the new win probability in each case. This is a bit larger than the 0.203 we computed above, because this methods gives slightly more weight to the larger swings in probability.
+      </p>
+
+      <p>
+            Using Tango's reported value of 0.0418 as the standard deviation in an average scenario, we compute the ratio to be
+            \[LI = \frac{0.257}{0.0418} = 6.14.\]
+            Again, this suggests that the result of Kiermaier's at bat would have the potential to swing the win probability of the game by about 6 times more than an average at bat. 
+      </p>
+     
+     <!--
+
+      <h2>Outline</h2>
+
+      <ul>
+            <li>Discuss Red Sox game on 4/23/22</li>
+            <li>Which events had substantial impact on WP? The balk? Not really, even if Story still made the error. The error by Story? Yes, but not by a ton, only about 5%</li>
+            <li>Moral of the story: the runner is likely to score anyway, so WP doesn't move much by allowing the runner to do so. The runner scoring is already "priced in" to our model!</li>
+            <li>Kiermaier's hit is the big boy - WP dropped from about 90% to 0% in one swing. </li>
+            <li>How do we quantify this? Luckily WP is pretty easy to calculate in extra innings: determine likelihood of 0, 1, 2, 3, etc. runs scoring, then determine likelihood that the home team independently scores 0/1+, 1/2+, etc. Can model with run expectancy data from 2021 season</li>
+            <li>Leverage index measures the "average change in WP." To compute this (rougly at least), we imagine all the possible scenarios, compute their (expected) frequencies and associated WP, then take product, sum. </li>
+      </ul>
+
+      Perhaps in another article: how does leverage look different with the new rules? Does this quantify "excitement?" No, but it does sort of capture pivotalness. Exhibit this with LI calculations for the first batter in the 10th inning. Calculate WPs using 2021 averages. Assume the possible outcomes of the 1st batter and get frequencies from 2022 averages. It <em>does</em> appear that with the runner on second, LI is somewhat higher. 
+
+      <ul>
+            <li>Greg Stoll's win probability finder has lots of data</li>
+
+      </ul>
+
+-->
+
+</div>
+</body>
+
+</html>

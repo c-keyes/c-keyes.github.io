@@ -1,0 +1,304 @@
+<!DOCTYPE html>
+
+<html>
+
+<head>
+	<title>Christopher Keyes - Blog</title>
+	<link rel="stylesheet" type="text/css" href="style.css" />
+	<script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+	<script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+	<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+
+<body>
+	<header>
+		Christopher Keyes
+	</header>
+
+	<script src="nav.js"></script>
+
+	<div id="rounded">
+
+		<h2>Talking Baseball: Predicting OPS+ in Pitcher-Batter Matchups</h2>
+
+			<p><em>(Originally published on ***)</em></p>
+
+			<p><em>This is part of a series of posts on sabermetrics and the mathematics of baseball. You can find more <a href = "./blog_talking_baseball.html">here</a>.</em></p>
+
+			<p>***Intro***</p>
+
+			<h3>OPS and OPS+</h3>
+
+			<p>
+				There are lots of metrics that measure batter output, but perhaps the most common ones are the so-called "slash line" of batting average, on base percentage, and slugging percentage; this is often displayed on TV broadcasts as AVG/OBP/SLG. 
+			</p>
+
+			<p>
+				Briefly, <a href="https://www.baseball-reference.com/bullpen/Batting_average">batting average</a> is how often a player gets a hit per at bat, while <a href="https://www.baseball-reference.com/bullpen/Slugging_percentage">slugging percentage</a> is weighted by total bases --- a single is 1, a double is 2, etc. Notably this doesn't include walks, which count as a <em>plate appearance</em> but not an at bat. <a href="https://www.baseball-reference.com/bullpen/On_base_percentage">On base percentage</a> is essentially how often a player gets on base in a plate appearance (it does exclude some things including sacrifice bunts).
+			</p>
+
+			<p>
+				None of these alone is satisfying as a measurement of "offensive ability," if we could hope to measure such a thing. Batting average and OBP neglect the impact of hitting for power, while slugging ignores walks and likely <a href="./blog_talking_baseball.html">over values extra base hits</a>. Sabermetricians have for decades invented novel ways of combining these data into a single number that captures offensive quality, but perhaps the simplest is OPS: 
+				\[OPS = OBP + SLG.\] 
+				Not only is it easily calculated without play-by-play data, but it also correlates much more closely to team runs scored per game than AVG, OBP, or SLG. (<a href="https://www.baseballprospectus.com/news/article/41203/prospectus-feature-ops-and-woba-briefly-revisited/">There's even an argument</a>  that it is superior to wOBA --- another such metric --- for this purpose.) 
+			</p>
+
+			<p>
+				<a href="https://sabr.org/journal/article/why-ops-works/#:~:text=Pete%20Palmer%2C%20the%20inventor%20of,twenty%2Dfirst%20century%2C%20but%20how">In his article</a>, Pete Palmer --- credited with creating OPS --- details that its accuracy comes from the fact that it captures the three ways a batter can contribute to scoring runs:
+				<ol>
+					<li>the batter advances on the basepaths,</li>
+					<li>the batter advances other runners, and</li>
+					<li>the batter doesn't get out, allowing another batter to come to the plate.</li>
+				</ol>
+				While more sophisticated metrics attempt to more carefully account for each of these, the magic of OPS is that it manages to capture so much in its simplicity.
+			</p>
+
+			<h4>OPS+: Normalizing to league average</h4>
+
+			<p>
+				To understand how a given player stacks up against his competitors, even across eras, we can normalize OPS to the league average. This is typically denoted OPS+, but here we'll use "bOPS+" to specify that we're looking at a batter. A league average hitter has bOPS = 100, with higher values better than average. Here's the formula:
+				\[bOPS+ = 100 \cdot \left(\frac{bOBP}{\widetilde{OBP}} + \frac{bSLG}{\widetilde{SLG}} - 1\right).\]
+				Here \(\widetilde{OBP}\) denotes the MLB average OBP in a given season, and similarly for SLG.
+			</p>
+
+			<p>
+				Interestingly, bOPS+ is set up to scale in <em>both</em> OPS and SLG. That is, if a hitter's OBP is 10% better than league average and their SLG is equal to the average, they would have bOPS+ = 110. If their SLG was instead 20% above league average, they would have bOPS+ = 130. This isn't necessarily how it has to be done, but it seems to incorporate how each of these metrics captures the three ways a batter contributes to run scoring.
+			</p>
+
+			<h4>pOPS+: a variant for pitchers</h4>
+
+			<p>
+				Could we use a similar approach to measure a pitcher's ability to <em>prevent</em> run scoring? Why not! Let's take a pitcher's OPS to be the OPS of their opponents and call it "pOPS" for "pitcher OPS". We can then normalize the same was as bOPS+ to get pOPS+. Here a <em>lower</em> value is better: e.g. a pitcher with a pOPS+ of 70 held their opponents to below average offensive production.
+			</p>
+
+			<p>
+				Why use pOPS+ instead of a metric like FIP (fielding independent pitching --- a wOBA-like stat for pitchers)? Because it's easier, mainly. And it is an excellent predictor of team runs allowed, as one might expect. It doesn't, however, attempt to consider ballparks or defense. I'll ignore those entirely for the purposes of this post.
+			</p>
+
+			<h3>A proposed relationship between bOPS+ and pOPS+</h3>
+
+			<p>
+				With a good batter at the plate (measured by their OPS+!) we might expect they are more likely to get on base or hit for power. Likewise, if a pitcher with a low pOPS+ is on the mound, we would predict that hitters tend to perform worse. But how do these interact? What should we expect from a good hitter against a good pitcher? Or a weak hitter versus an elite pitcher?
+			</p>
+
+			<p>
+				If we think of bOPS+ (resp. pOPS+) as telling us "how much better a hitter is (resp. hitters against a certain pitcher are) than league average," this starts to suggest a relationship. If a league average hitter (bOPS+ = 100) faces a good pitcher (say pOPS+ = 80) a bunch of times, we should probably expect to see an OPS+ of 80, reflecting the pitcher's performance on average.  
+			</p>
+
+			<p>
+				This rules out a relationship like "take the average of bOPS+ and pOPS+." Instead, let's consider a multiplicative relationship:
+				\[mOPS+ = \frac{(bOPS+)(pOPS+)}{100}.\]
+				In words, this is saying something like "whatever a batter's production (as measured by bOPS+), the pitcher's ability scales it by some factor," or the other way around if you prefer. A <em>really terrible</em> pitcher with a pOPS+ of 200 is expected to double the bOPS+ value. On the other hand, 
+			</p>
+
+			<p>
+				Let's look at some data from the 2021 MLB season bOPS+/pOPS+.
+			</p>
+
+		<h3>Testing charts</h3>
+
+		<center>
+			<style type="text/css">
+.tg  {border-collapse:collapse;border-spacing:0;}
+.tg td{border-style:solid;border-width:0px;font-family:Arial, sans-serif;font-size:14px;overflow:hidden;
+  padding:10px 5px;word-break:normal;}
+.tg th{border-style:solid;border-width:0px;font-family:Arial, sans-serif;font-size:14px;font-weight:normal;
+  overflow:hidden;padding:10px 5px;word-break:normal;}
+.tg .tg-rx9d{background-color:#aaaaaa;border-color:inherit;font-size:18px;text-align:left;vertical-align:top}
+.tg .tg-f3z3{background-color:#aaaaaa;border-color:inherit;font-size:18px;text-align:left;vertical-align:middle}
+.tg .tg-tn1s{background-color:#f2e9e4;border-color:inherit;font-size:18px;text-align:left;vertical-align:top}
+.tg .tg-fq4c{background-color:#aaaaaa;font-size:18px;text-align:left;vertical-align:middle}
+.tg .tg-i7xe{background-color:#f2e9e4;border-color:inherit;font-size:18px;text-align:center;vertical-align:top}
+.tg .tg-t544{background-color:#aaaaaa;font-size:18px;text-align:left;vertical-align:top}
+.tg .tg-re1z{background-color:#f2e9e4;font-size:18px;text-align:center;vertical-align:top}
+.tg .tg-kyw1{background-color:#f2e9e4;border-color:inherit;font-size:18px;font-weight:bold;text-align:left;vertical-align:top}
+.tg .tg-rqst{background-color:#aaaaaa;border-color:inherit;font-size:18px;text-align:center;vertical-align:top}
+.tg .tg-l8wg{background-color:#f2e9e4;border-color:inherit;font-size:18px;text-align:left;vertical-align:middle}
+.tg .tg-7c7f{background-color:#f2e9e4;font-size:18px;text-align:left;vertical-align:top}
+.tg .tg-n6zu{background-color:#aaaaaa;font-size:18px;text-align:center;vertical-align:top}
+</style>
+<table class="tg">
+<thead>
+  <tr>
+    <th class="tg-kyw1">Quintile</th>
+    <th class="tg-kyw1"></th>
+    <th class="tg-kyw1">bOPS+ (min 400 PA)</th>
+    <th class="tg-kyw1">pOPS+ (min 500 BF)</th>
+  </tr>
+</thead>
+<tbody>
+  <tr>
+    <td class="tg-f3z3" rowspan="2">1</td>
+    <td class="tg-rx9d">Range</td>
+    <td class="tg-rqst">38.0 - 94.7</td>
+    <td class="tg-rqst">45.3 - 76.7</td>
+  </tr>
+  <tr>
+    <td class="tg-rx9d">Median</td>
+    <td class="tg-rqst">84.5</td>
+    <td class="tg-rqst">68.8</td>
+  </tr>
+  <tr>
+    <td class="tg-l8wg" rowspan="2">2</td>
+    <td class="tg-tn1s">Range</td>
+    <td class="tg-i7xe">94.7 - 106.7</td>
+    <td class="tg-i7xe">76.7 - 90.7</td>
+  </tr>
+  <tr>
+    <td class="tg-tn1s">Median</td>
+    <td class="tg-i7xe">100.7</td>
+    <td class="tg-i7xe">85.3</td>
+  </tr>
+  <tr>
+    <td class="tg-f3z3" rowspan="2">3</td>
+    <td class="tg-rx9d">Range</td>
+    <td class="tg-rqst">106.7 - 116.2</td>
+    <td class="tg-rqst">90.7 - 101.0</td>
+  </tr>
+  <tr>
+    <td class="tg-rx9d">Median</td>
+    <td class="tg-rqst">113.6</td>
+    <td class="tg-rqst">97.9</td>
+  </tr>
+  <tr>
+    <td class="tg-l8wg" rowspan="2">4</td>
+    <td class="tg-tn1s">Range</td>
+    <td class="tg-i7xe">116.2 - 134.0</td>
+    <td class="tg-i7xe">101.0 - 115.2</td>
+  </tr>
+  <tr>
+    <td class="tg-7c7f">Median</td>
+    <td class="tg-re1z">124.1</td>
+    <td class="tg-re1z">106.2</td>
+  </tr>
+  <tr>
+    <td class="tg-fq4c" rowspan="2">5</td>
+    <td class="tg-t544">Range</td>
+    <td class="tg-n6zu">134.0 - 184.9</td>
+    <td class="tg-n6zu">115.2 - 137.0</td>
+  </tr>
+  <tr>
+    <td class="tg-t544">Median</td>
+    <td class="tg-n6zu">144.8</td>
+    <td class="tg-n6zu">127.6</td>
+  </tr>
+</tbody>
+</table>
+		</center>
+
+		<div><center>
+			<canvas id="mOPS+" style="width:100%;max-width:600px;max-height:400px"></canvas>
+			</center></div>
+
+</div>
+
+<script>
+var bops = [80, 100, 120, 140, 160];
+var pops60 = [50.90689157, 66.76806464, 73.22118999, 99.81668953, 164.8495165];
+var pops80 = [56.14522781, 83.84722721, 97.22688396, 116.707706, 126.4332641];
+var pops100 = [86.00554887, 95.36902081, 117.5686715, 135.8425694, 163.9651492];
+var pops120 = [95.32755398, 130.0444117, 130.9397292, 158.2527094, 209.9794357];
+var x120 = [96, 120, 144, 168, 192];
+var x100 = [80, 100, 120, 140, 160];
+var x80 = [64, 80, 96, 112, 128];
+var x60 = [48, 60, 72, 84, 96];
+
+// make runs_by_inning bar chart
+new Chart("mOPS+", {
+  	type: "line",
+ 	data: {
+    	labels: bops,
+    	datasets: [{
+    		label: '110 < pOPS+ < 130',
+      		data: pops120,
+      		borderColor: 'blue',
+      		pointBackgroundColor: 'blue',
+      		showLine: false
+    	},
+    	{
+    		label: '90 < pOPS+ < 110',
+      		data: pops100,
+      		borderColor: 'red',
+      		pointBackgroundColor: 'red',
+      		showLine: false
+    	},
+    	{
+    		label: '70 < pOPS+ < 90',
+      		data: pops80,
+      		borderColor: 'green',
+      		pointBackgroundColor: 'green',
+      		showLine: false
+    	},
+    	{
+    		label: 'pOPS+ < 70',
+      		data: pops60,
+      		borderColor: 'black',
+      		pointBackgroundColor: 'black',
+      		showLine: false
+    	},
+    	{
+    		label: '110 < pOPS+ < 130 (exp)',
+      		data: x120,
+      		borderColor: 'blue',
+      		pointBackgroundColor: 'blue',
+      		pointRadius: 0,
+      		borderDash: [5],
+      		borderWidth: 2    	
+      	},
+    	{
+    		label: '90 < pOPS+ < 110 (exp)',
+      		data: x100,
+      		borderColor: 'red',
+      		pointBackgroundColor: 'red',
+      		pointRadius: 0,
+      		borderDash: [5],
+      		borderWidth: 2    	
+      	},
+    	{
+    		label: '70 < pOPS+ < 90 (exp)',
+      		data: x80,
+      		borderColor: 'green',
+      		pointBackgroundColor: 'green',
+      		pointRadius: 0,
+      		borderDash: [5],
+      		borderWidth: 2    	
+      	},
+    	{
+    		label: 'pOPS+ < 70 (exp)',
+      		data: x60,
+      		borderColor: 'black',
+      		pointBackgroundColor: 'black',
+      		pointRadius: 0,
+      		borderDash: [5],
+      		borderWidth: 2
+    	}]
+  	},
+  	options: {
+  		plugins: {
+    		legend: {display: true},
+    		title: {
+      			display: true,
+      			text: "Figure ***: Matchup OPS+ by pOPS+ and bOPS+"
+    		},
+    	},
+    	scales: {
+    		y: {
+    			title: {
+    				display: true,
+    				text: "mOPS+"
+    			}
+    		},
+    		x: {
+    			title: {
+    				display: true,
+    				text: "bOPS+"
+    			}
+    		}
+    	}
+  	},
+});
+</script>
+
+</body>
+
+</html>
