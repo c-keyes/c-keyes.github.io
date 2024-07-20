@@ -5,5 +5,4 @@ document.write('<nav><ul>\
 			<li> <a href="./service.html">Organization/Outreach</a></li>\
 			<li> <a href="./writing.html">Writing</a></li>\
 			<li> <a href="./fun.html">Other</a></li>\
-			<li> <a href="./drp.html">DRP</a></li>\
 </ul></nav>');
