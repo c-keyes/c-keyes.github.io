@@ -31,6 +31,15 @@ header {
 	display: inline-table;
 }
 
+a {
+	text-decoration: none;
+}
+
+/*a:hover {
+	text-decoration: none;
+	color: blue;
+}*/
+
 table td {
 	padding: 10px 10px;
 }
@@ -67,7 +76,7 @@ nav ul li {
 }
 
 nav ul li a {
-	color: lightgrey;
+	color: #F2E9E4;
 	text-decoration: none;
 	font: 14pt arial;
 	display: block;
