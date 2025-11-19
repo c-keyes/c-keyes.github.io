@@ -38,6 +38,17 @@
 			document.write('<br>(', links, ')')
 			return
 		}
+
+		function talk(title, event, location, year, month, day) {
+			document.write('<em>', title, '</em>, ', event, ', ', location, ', ', day, ' ', month, ' ', year, '.');
+		}
+
+		function talktable(title, event, location, year, month, day) {
+			document.write('<tr>',
+				'<td style="vertical-align: top;">',year,'</td>',
+				'<td style="vertical-align: top;">',month,'</td>',
+				'<td><em>', title, '</em><br>', event, ', ', location, '</td></tr>')
+		}
 	</script>
 </head>
 
@@ -179,10 +190,269 @@
 
 		<h2> Invited Talks </h2>
 
+		<!-- commented out table version
+		<table>
+			<script>talktable(
+				'Towards Artin’s conjecture on p-adic forms in low degree',
+				'AMS Special Session on Algebraic and Analytic Aspects of Curves and L-functions',
+				'Joint Math Meetings, Washington D.C.',
+				'2026',
+				'January',
+				'4-7');
+			</script>
+
+			<script>talktable(
+				'TBD',
+				'Number Theory, Algebra and Geometry Seminar',
+				'University of Exeter',
+				'2025',
+				'November',
+				'18');
+			</script>
+
+			<script>talktable(
+				'The Hasse principle for families of generalized Fermat equations',
+				'Algebra and Number Theory Seminar',
+				'Dartmouth College',
+				'',
+				'',
+				'3');
+			</script>
+
+			<script>talktable(
+				'Towards Artin’s conjecture on p-adic forms in low degree',
+				'Algebra, Number Theory, Logic, and Representations Seminar',
+				'University of East Anglia',
+				'',
+				'October',
+				'14');
+			</script>
+		</table>
+	-->
+
+		<ol reversed>
+			<li><script>talk(
+				'Towards Artin’s conjecture on p-adic forms in low degree',
+				'AMS Special Session on Algebraic and Analytic Aspects of Curves and L-functions',
+				'Joint Math Meetings, Washington D.C.',
+				'2026',
+				'January',
+				'4-7');
+			</script></li>
+
+			<li><script>talk(
+				'Towards Artin’s conjecture on p-adic forms in low degree',
+				'Number Theory, Algebra and Geometry Seminar',
+				'University of Exeter',
+				'2025',
+				'November',
+				'19');
+			</script></li>
+
+			<li><script>talk(
+				'The Hasse principle for families of generalized Fermat equations',
+				'Algebra and Number Theory Seminar',
+				'Dartmouth College',
+				'2025',
+				'November',
+				'3');
+			</script></li>
+
+			<li><script>talk(
+				'Towards Artin’s conjecture on p-adic forms in low degree',
+				'Algebra, Number Theory, Logic, and Representations Seminar',
+				'University of East Anglia',
+				'2025',
+				'October',
+				'14');
+			</script></li>
+
+			<li><script>talk(
+				'The Hasse principle for generalized Fermat equations of the form x^2 + By^2 = Cz^n',
+				'Spring of Rational Points II',
+				'University of Bath',
+				'2025',
+				'May',
+				'13');
+			</script></li>
+
+			<li><script>talk(
+				'Towards Artin’s conjecture on p-adic quintic forms',
+				'Great Western Number Theory Seminar',
+				'University of Reading',
+				'2025',
+				'April',
+				'4');
+			</script></li>
+
+			<li><script>talk(
+				'Towards Artin’s conjecture on p-adic quintic forms',
+				'Manchester Number Theory Seminar',
+				'University of Manchester',
+				'2025',
+				'March',
+				'18');
+			</script></li>
+
+			<li><script>talk(
+				'Towards Artin’s conjecture on p-adic quintic forms',
+				'London Number Theory Seminar',
+				'University College London',
+				'2025',
+				'March',
+				'5');
+			</script></li>
+
+			<li><script>talk(
+				'How often does a cubic hypersurface have a point?',
+				'Number Theory Seminar',
+				'University of Illinois Chicago',
+				'2024',
+				'October',
+				'15');
+			</script></li>
+
+			<li><script>talk(
+				'How often does a cubic hypersurface have a point?',
+				'Arithmetic Geometry Seminar',
+				'University of Bath',
+				'2024',
+				'May',
+				'21');
+			</script></li>
+
+			<li><script>talk(
+				'How often does a cubic hypersurface have a point?',
+				'Utrecht Geometry Centre Seminar',
+				'Utrecht University',
+				'2024',
+				'April',
+				'9');
+			</script></li>
+
+			<li><script>talk(
+				'How often does a cubic hypersurface have a point?',
+				'Number Theory Seminar',
+				'University of Cambridge',
+				'2024',
+				'February',
+				'20');
+			</script></li>
+
+			<li><script>talk(
+				'Explicit local solubility in families of varieties',
+				'Number Theory Seminar',
+				"King's College London",
+				'2023',
+				'November',
+				'30');
+			</script></li>
+
+			<li><script>talk(
+				'Explicit local solubility in families of varieties',
+				'Linfoot Seminar',
+				'University of Bristol',
+				'2024',
+				'November',
+				'29');
+			</script></li>
+
+			<li><script>talk(
+				'Local solubility in families of superelliptic curves',
+				'Number Theory Seminar',
+				'University of North Texas',
+				'2023',
+				'September',
+				'15');
+			</script></li>
+
+			<li><script>talk(
+				'Local solubility in families of superelliptic curves',
+				'Number Theory Seminar',
+				'UC Irvine',
+				'2023',
+				'January',
+				'19');
+			</script></li>
+
+			<li><script>talk(
+				'Local solubility in families of superelliptic curves',
+				'AMS Special Session on Arithmetic Statistics',
+				'Joint Math Meetings, Boston',
+				'2023',
+				'January',
+				'4-7');
+			</script></li>
+
+			<li><script>talk(
+				'Local solubility in families of superelliptic curves',
+				'Number Theory Seminar',
+				'UC San Diego',
+				'2022',
+				'December',
+				'1');
+			</script></li>
+
+			<li><script>talk(
+				'Local solubility in families of superelliptic curves',
+				'Number Theory Seminar',
+				'The Ohio State University',
+				'2022',
+				'November',
+				'21');
+			</script></li>
+
+			<li><script>talk(
+				'Local solubility in families of superelliptic curves',
+				'Number Theory Seminar',
+				'University of Georgia',
+				'2022',
+				'November',
+				'2');
+			</script></li>
+
+			<li><script>talk(
+				'Local solubility in families of superelliptic curves',
+				'Arithmetic Geometry and Number Theory Seminar',
+				'UC Berkeley',
+				'2022',
+				'October',
+				'24');
+			</script></li>
+
+			<li><script>talk(
+				'Local solubility in families of superelliptic curves',
+				'Algebra, Geometry, and Number Theory Seminar',
+				'University of South Carolina',
+				'2022',
+				'April',
+				'8');
+			</script></li>
+
+			<li><script>talk(
+				'On the proportion of everywhere locally soluble superelliptic curves',
+				'(Secret) Algebra, Geometry, and Number Theory Seminar',
+				'Tufts University',
+				'2021',
+				'November',
+				'18');
+			</script></li>
+
+			<li><script>talk(
+				'Fields generated by points on superelliptic curves',
+				'Number Theory Seminar',
+				'University of Washington',
+				'2021',
+				'June',
+				'8');
+			</script></li>
+		</ol>
+
+<!-- old formatting
 		<ol reversed>
 			<li><em>Towards Artin’s conjecture on p-adic forms in low degree</em>. AMS Special Session on Algebraic and Analytic Aspects of Curves and L-functions, Joint Math Meetings, January 4 - 7, 2026.</li>
 			<li><em>TBD</em>. Number Theory, Algebra and Geometry Seminar, University of Exeter, 19 November, 2025.
-			<li><em>TBD</em>. Algebra and Number Theory Seminar, Dartmouth College, 10 November, 2025.
+			<li><em>The Hasse principle for families of generalized Fermat equations</em>. Algebra and Number Theory Seminar, Dartmouth College, 10 November, 2025.
 			<li><em>Towards Artin’s conjecture on p-adic forms in low degree</em>. Algebra, Number Theory, Logic, and Representations Seminar, University of East Anglia, TBD.</li>
  			<li><em>The Hasse principle for generalized Fermat equations of the form x^2 + By^2 = Cz^n</em>. <a href="https://sites.google.com/view/jessepajwani/spring-of-rational-points-ii?authuser=0">Spring of Rational Points II</a>, University of Bath, May 13, 2025.</li> 
 			<li><em>Towards Artin's conjecture on p-adic quintic forms.</em> <a href="https://sites.google.com/view/gwntseminar/home">Great Western Number Theory Seminar</a>, University of Reading, April 4, 2025.</li> 
@@ -203,13 +473,100 @@
 			<li><em>Local solubility in families of superelliptic curves</em>. Arithmetic Geometry and Number Theory Seminar, UC Berkeley, October 24, 2022.</li>
 			<li><em>Local solubility in families of superelliptic curves</em>. Algebra, Geometry, and Number Theory Seminar, University of South Carolina, April 8, 2022.</li>
 			<li><em>On the proportion of everywhere locally soluble superelliptic curves</em>. (Secret) Algebra, Geometry, and Number Theory Seminar, Tufts University, November 18, 2021. (<a href="./files/SEC_density_Tufts_18Nov21.pdf">slides</a>)</li>
-			<!--<li> <em>Chip-firing games and arithmetical structures on graphs</em>. WashU Undergraduate Mathematics Seminar, Washington University in St. Louis (held virtually), November 9, 2021.</li>-->
 			<li> <em>Fields generated by points on superelliptic curves</em> (joint talk with Lea Beneish). UW Number Theory Seminar, University of Washington (held virtually), June 8, 2021.</li>
-			<!--<li> <em>Counting number fields: problems and progress</em>. WashU Undergraduate Mathematics Seminar, Washington University in St. Louis (held virtually), January 29, 2021.</li>-->
 		</ol>
+	-->
 
 		<h2> Contributed Talks </h2>
 
+		testing table version:
+		<table>
+			<script>talktable(
+				'Local solubility in families of superelliptic curves',
+				'Connecticut Number Theory Conference (CTNT)',
+				'University of Connecticut',
+				'2022',
+				'June',
+				'10');
+				</script>
+				<script>talktable(
+				'On the proportion of everywhere locally soluble superelliptic curves',
+				'Upstate Number Theory Conference',
+				'Union College',
+				'2021',
+				'October',
+				'23');
+			</script>
+		</table>
+
+		<ol reversed>
+			<li><script>talk(
+				'Local solubility in families of superelliptic curves',
+				'Connecticut Number Theory Conference (CTNT)',
+				'University of Connecticut',
+				'2022',
+				'June',
+				'10');
+			</script></li>
+			<li><script>talk(
+				'On the proportion of everywhere locally soluble superelliptic curves',
+				'Upstate Number Theory Conference',
+				'Union College',
+				'2021',
+				'October',
+				'23');
+			</script></li>
+			<li><script>talk(
+				'Fields generated by points on superelliptic curves',
+				'Young Researchers in Number Theory (Y-RANT)',
+				'University of Bristol (held virtually)', 
+				'2021',
+				'August',
+				'20');
+			</script></li>
+			<li><script>talk(
+				"Mertens' product theorem for primes in Chebotarev sets",
+				'Front Range Number Theory Day',
+				'held virtually',
+				'2021',
+				'April',
+				'24');
+			</script></li>
+			<li><script>talk(
+				'An upper bound for the number of arithmetical structures on a graph',
+				'Mid-Atlantic Seminar on Numbers (MASON) V',
+				'held virtually',
+				'2021',
+				'March',
+				'27');
+			</script></li>
+			<li><script>talk(
+				'An upper bound for the number of arithmetical structures on a graph',
+				'PAlmetto Joint Arithmetic, Modularity, and Analysis Series (PAJAMAS)',
+				'University of South Carolina (held virtually)',
+				'2020',
+				'December',
+				'6');
+			</script> (<a href="./files/Keyes_arith_structs_slides_5Dec20.pdf">slides</a>)</li>
+			<li><script>talk(
+				'Growth of points on hyperelliptic curves',
+				'Tufts Undergraduate Research Symposium', 
+				'Tufts University',
+				'2018',
+				'May',
+				'3');
+			</script></li>
+			<li><script>talk(
+				'Growth of points on hyperelliptic curves',
+				'PAlmetto Number Theory Series (PANTS) XXVIII',
+				'University of Tennessee Knoxville',
+				'2017',
+				'September',
+				'17');
+			</script></li>
+		</ol>
+
+<!--
 		<ol reversed>
 			<li><em>Local solubility in families of superelliptic curves</em>. Connecticut Number Theory Conference (CTNT), University of Connecticut, June 10, 2022.</li>
 			<li> <em>On the proportion of everywhere locally soluble superelliptic curves</em>. Upstate Number Theory Conference, Union College, October 23, 2021.</li>
@@ -220,6 +577,7 @@
 			<li> <em>Growth of points on hyperelliptic curves</em>. Tufts Undergraduate Research Symposium, Tufts University, May 3, 2018.</li>
 			<li> <em>Growth of points on hyperelliptic curves</em>. PAlmetto Number Theory Series (PANTS) XXVIII, University of Tennessee Knoxville, September 17, 2017.</li>
 		</ol>
+	-->
 
 		<h2>Travel, past and future</h2>
 
